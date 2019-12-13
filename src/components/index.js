@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -23,8 +23,6 @@ import Sigup from "./signin/signup";
 import languageContext from "../context/language";
 
 function Routing(props) {
-  const [lang, setlanguage] = useState({ language: 'english'});
-  console.log("language ", lang);
   const checkInitialAuth = () => {
     const isAuthenticated = reactLocalStorage.get("isAuthenticated");
     if (isAuthenticated) {
@@ -35,15 +33,9 @@ function Routing(props) {
   };
   checkInitialAuth();
 
-  const changeLanguage = () => {
-    let lan = lang.language == "English" ? "Spanish" : "English";
-   // setlanguage(lang.up);
-  };
-
   return (
     <Container>
       <languageContext.Provider>
-        <a onClick={() => changeLanguage()}> Change Language</a>
         <Router>
           <Header />
           <div className="ui segment">
@@ -74,10 +66,7 @@ function Routing(props) {
   );
 }
 
-export default connect(
-  null,
-  { signin }
-)(Routing);
+export default connect(null, { signin })(Routing);
 
 // screen if you're not yet authenticated.
 const AuthRouteFn = ({ children, user, ...rest }) => {
@@ -101,9 +90,6 @@ const AuthRouteFn = ({ children, user, ...rest }) => {
   );
 };
 
-const AuthRoute = connect(
-  ({ user }) => {
-    return { user };
-  },
-  null
-)(AuthRouteFn);
+const AuthRoute = connect(({ user }) => {
+  return { user };
+}, null)(AuthRouteFn);

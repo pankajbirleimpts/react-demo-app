@@ -1,14 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link, useRouteMatch } from "react-router-dom";
 import { Grid } from "semantic-ui-react";
-import languageContext from "../../context/language";
 
 export default function Header() {
-  const langContext = useContext(languageContext);
-  console.log("languageContext header ", langContext);
   return (
     <Grid.Row>
-      <p>{langContext}</p>
       <div className="ui secondary pointing menu">
         <MenuLink to="/" label="Home" />
         <MenuLink to="/about" label="About" />

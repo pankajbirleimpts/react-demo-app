@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { reactLocalStorage } from "reactjs-localstorage";
-import { signin, signout } from "../../actions/UserAction";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
+import { signin, signout, signup } from "../../actions/UserAction";
 import { langs } from "../../config";
-
+import { Loader } from "../common";
 
 function equalTo(ref, msg) {
   return Yup.mixed().test({
@@ -25,18 +25,7 @@ function equalTo(ref, msg) {
 Yup.addMethod(Yup.string, "equalTo", equalTo);
 
 class Signup extends Component {
-  state = {
-    //  location : useLocation()
-  };
-
-  login = () => {
-    this.props.signin(() => {
-      let { from } = this.props.location.state || { from: { pathname: "/" } };
-      console.log("from ", from);
-      this.props.history.replace(from);
-    });
-  };
-
+  
   componentDidMount() {
     const isAuthenticated = reactLocalStorage.get("isAuthenticated");
     console.log("isAuthenticated ", isAuthenticated, typeof isAuthenticated);
@@ -45,8 +34,17 @@ class Signup extends Component {
     }
   }
 
+  /**
+   * @formSubmitHandler
+   * @desc: Submit the signup form
+   */
   formSubmitHandler = values => {
-    console.log("formSubmitHandler ", values);
+    delete values.confirmPassword;
+    values.balance = 0;
+    values.role = "EMPLOYEE";
+    this.props.signup(values, () => {
+      this.props.history.replace("/login");
+    });
   };
 
   /**
@@ -65,17 +63,19 @@ class Signup extends Component {
         .min(8, langs.messages.CHAR_MIN_LIMIT_8)
         .required(langs.messages.REQUIRED),
       confirmPassword: Yup.string()
-      .required(langs.messages.REQUIRED)
+        .required(langs.messages.REQUIRED)
         .equalTo(Yup.ref("password"), langs.messages.PASSWORD_NOT_MATCH),
       email: Yup.string()
         .email(langs.messages.INVALID_EMAIL)
         .required(langs.messages.REQUIRED),
-      bio: Yup.string().max(250, langs.messages.CHAR_MAX_LIMIT_250),
-      gender: Yup.string().required(langs.messages.REQUIRED),
       country: Yup.string().required(langs.messages.REQUIRED)
     });
   };
 
+  /**
+   * @renderForm
+   * @desc: rednder form
+   */
   renderForm = ({ values, setFieldValue }) => {
     return (
       <Form noValidate className="ui form">
@@ -88,6 +88,11 @@ class Signup extends Component {
           <label>Last Name</label>
           <Field name="lastName" type="text" />
           <ErrorMessage component="p" name="lastName" className="red" />
+        </div>
+        <div className="field">
+          <label>Employee ID</label>
+          <Field name="employeeId" type="text" />
+          <ErrorMessage component="p" name="employeeId" className="red" />
         </div>
         <div className="field">
           <label>Email</label>
@@ -105,49 +110,12 @@ class Signup extends Component {
           <ErrorMessage component="p" name="confirmPassword" className="red" />
         </div>
         <div className="field">
-          <label>Gender</label>
-          <div className="field">
-            <div className="ui radio checkbox">
-              <Field
-                type="radio"
-                name="gender"
-                value="male"
-                checked={values.gender === "male"}
-                onChange={() => setFieldValue("gender", "male")}
-              />
-              <label onClick={() => setFieldValue("gender", "male")}>
-                Male
-              </label>
-            </div>
-          </div>
-          <div className="field">
-            <div className="ui radio checkbox">
-              <Field
-                type="radio"
-                name="gender"
-                value="female"
-                checked={values.gender === "female"}
-                onChange={() => setFieldValue("gender", "female")}
-              />
-              <label onClick={() => setFieldValue("gender", "female")}>
-                Female
-              </label>
-            </div>
-          </div>
-          <ErrorMessage component="p" name="gender" className="red" />
-        </div>
-        <div className="field">
-          <label>Bio</label>
-          <Field name="bio" rows={2} as="textarea" />
-          <ErrorMessage component="p" name="bio" className="red" />
-        </div>
-        <div className="field">
-          <label>Country</label>
+          <label>Location</label>
           <Field name="country" as="select">
-            <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="UK">UK</option>
-            <option value="England">England</option>
+            <option value="">Select Location</option>
+            <option value="Indore">Indore</option>
+            <option value="Indore">Noida</option>
+            <option value="Banglore">Banglore</option>
           </Field>
           <ErrorMessage component="p" name="country" className="red" />
         </div>
@@ -160,7 +128,8 @@ class Signup extends Component {
 
   render() {
     return (
-      <Grid celled="internally">
+      <Grid>
+        <Loader isLoading={this.props.user.isLoading} />
         <Grid.Row centered>
           <Grid.Column width="8">
             <h2>Signup</h2>
@@ -171,7 +140,7 @@ class Signup extends Component {
                 email: "",
                 password: "",
                 confirmPassword: "",
-                gender: "",
+                employeeId: "",
                 country: ""
               }}
               validationSchema={this.loginFormValidation()}
@@ -194,7 +163,6 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(
-  mapStateToProp,
-  { signin, signout }
-)(withRouter(Signup));
+export default connect(mapStateToProp, { signin, signout, signup })(
+  withRouter(Signup)
+);

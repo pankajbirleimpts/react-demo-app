@@ -1,6 +1,14 @@
-import { SIGNIN, SIGNOUT } from "../actions/consts";
+import {
+  SIGNIN,
+  SIGNOUT,
+  SIGNUP,
+  USER_API_FAIL,
+  USER_API_REQUEST
+} from "../actions/consts";
 const initialState = {
-  isAuthenticated: false
+  isAuthenticated: false,
+  isLoading: false,
+  data: null
 };
 
 export default function UserReducer(state = initialState, action) {
@@ -8,12 +16,29 @@ export default function UserReducer(state = initialState, action) {
     case SIGNIN:
       return {
         ...state,
-        isAuthenticated: true
+        isLoading: false,
+        isAuthenticated: true,
+        data: action.payload
       };
     case SIGNOUT:
       return {
         ...state,
         isAuthenticated: false
+      };
+    case USER_API_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+    case USER_API_FAIL:
+      return {
+        ...state,
+        isLoading: false
+      };
+    case SIGNUP:
+      return {
+        ...state,
+        isLoading: false
       };
     default:
       return state;

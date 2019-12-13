@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
 import { signin, signout } from "../../actions/UserAction";
 import { langs } from "../../config";
+import { Loader } from "../common";
 
 class Signin extends Component {
   state = {
@@ -23,9 +24,8 @@ class Signin extends Component {
 
   formSubmitHandler = values => {
     console.log("formSubmitHandler ", values);
-    this.props.signin(() => {
+    this.props.signin(values, () => {
       let { from } = this.props.location.state || { from: { pathname: "/" } };
-      console.log("from ", from);
       this.props.history.replace(from);
     });
   };
@@ -65,7 +65,8 @@ class Signin extends Component {
 
   render() {
     return (
-      <Grid celled="internally">
+      <Grid>
+        <Loader isLoading={this.props.user.isLoading} />
         <Grid.Row centered>
           <Grid.Column width="8">
             <h2>Signup</h2>
@@ -94,7 +95,4 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(
-  mapStateToProp,
-  { signin, signout }
-)(withRouter(Signin));
+export default connect(mapStateToProp, { signin, signout })(withRouter(Signin));
