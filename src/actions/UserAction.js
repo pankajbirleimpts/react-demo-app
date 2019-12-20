@@ -18,6 +18,19 @@ const header = {
   }
 };
 
+/**
+ * @updateUserStore
+ * @desc: Update user store date from the local storage
+ */
+export function updateUserStore(userData) {
+  return dispatch => {
+    dispatch({
+      type: SIGNIN,
+      payload: userData
+    });
+  };
+}
+
 export function signin(user, callback) {
   return dispatch => {
     dispatch({

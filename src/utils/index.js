@@ -1,3 +1,7 @@
+import React from "react";
+import { connect } from "react-redux";
+import { Link, useRouteMatch } from "react-router-dom";
+
 /**
  * method firebaseResponseTransform
  * desc: change the firebase response as object of array
@@ -11,3 +15,25 @@ export function firebaseResponseTransform(response) {
   });
   return result;
 }
+
+function MenuLinkfn({ label, to, activeOnlyWhenExact = true, user }) {
+  console.log("user MenuLink", user);
+  let match = useRouteMatch({
+    path: to,
+    exact: activeOnlyWhenExact
+  });
+
+  return (
+    <Link className={match ? "item active" : "item"} to={to}>
+      {label}
+    </Link>
+  );
+}
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const MenuLink = connect(mapStateToProps, null)(MenuLinkfn);
+
+export { MenuLink };

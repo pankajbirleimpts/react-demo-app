@@ -10,7 +10,7 @@ import { reactLocalStorage } from "reactjs-localstorage";
 import "semantic-ui-css/semantic.min.css";
 import { Container } from "semantic-ui-react";
 
-import { signin } from "../actions/UserAction";
+import { updateUserStore } from "../actions/UserAction";
 
 import Header from "./header";
 import Login from "./signin";
@@ -23,15 +23,13 @@ import Sigup from "./signin/signup";
 import languageContext from "../context/language";
 
 function Routing(props) {
-  const checkInitialAuth = () => {
-    const isAuthenticated = reactLocalStorage.get("isAuthenticated");
-    if (isAuthenticated) {
-      props.signin(() => {
-        console.log("callback ");
-      });
+  /** Check the localstorage have information of logged user */
+  (function() {
+    const loggedUser = reactLocalStorage.get("loggedUser");
+    if (loggedUser && props.user.isAuthenticated === false) {
+      props.updateUserStore(JSON.parse(loggedUser));
     }
-  };
-  checkInitialAuth();
+  })();
 
   return (
     <Container>
@@ -66,7 +64,11 @@ function Routing(props) {
   );
 }
 
-export default connect(null, { signin })(Routing);
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+export default connect(mapStateToProps, { updateUserStore })(Routing);
 
 // screen if you're not yet authenticated.
 const AuthRouteFn = ({ children, user, ...rest }) => {

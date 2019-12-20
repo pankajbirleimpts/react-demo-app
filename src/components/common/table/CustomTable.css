@@ -1,0 +1,28 @@
+.sorting {
+  font-size: 18px;
+  float: right;
+}
+.sorting.fa-sort {
+  color: #bab4b4;
+} 
+.action-icon{
+  color: #3e3edb;
+  font-size: 20px;
+  margin: 5px 10px;
+}
+.action-btn-icon{
+  color: #ffffff;
+  margin: 0 5px;
+}
+.error{
+  color: red;
+}
+.row-per-label{
+  font-size: 15px;
+  margin-right: 10px;
+}
+.btn-circle{
+  border-radius: 50%;
+}
+
+
