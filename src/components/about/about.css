@@ -6,9 +6,3 @@
     height: 400px;
     flex-wrap: wrap;
 }
-.item {
-    background: red;
-    margin: 20px;
-    width: 100px;
-    height: 100px;
-}

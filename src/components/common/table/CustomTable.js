@@ -1,49 +1,54 @@
 import React, { Component } from "react";
-import { Row, Col, Table } from "react-bootstrap";
-import Pagination from "react-js-pagination";
+import { Header, Table, Rating, Grid, Pagination } from "semantic-ui-react";
+import classNames from "classnames";
+// import Pagination from "react-js-pagination";
+import { Route, withRouter } from "react-router-dom";
 import "./CustomTable.css";
-import Tooltip from "./Tooltip";
 
 class CustomTable extends Component {
-  state = {
-    currentPage: 1,
-    dataPerPage: 5,
-    search: "",
-    rowData: [5, 10, 15],
-    status: "",
-    selectedRow: null,
-    statusOptions: [
-      {
-        label: "CSV",
-        value: "csv"
-      },
-      {
-        label: "XLS",
-        value: "xls"
-      }
-    ],
-    columns: [],
-    tableData: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentPage: 1,
+      dataPerPage: 5,
+      search: "",
+      rowData: [5, 10, 15],
+      status: "",
+      selectedRow: null,
+      statusOptions: [
+        {
+          label: "CSV",
+          value: "csv"
+        },
+        {
+          label: "XLS",
+          value: "xls"
+        }
+      ],
+      columns: [],
+      tableData: []
+    };
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (
-      nextProps.tableData !== prevState.tableData &&
-      prevState.tableData.length === 0
-    ) {
+    console.log("nextProps, prevState ", nextProps, prevState);
+    if (nextProps.tableData !== prevState.tableData) {
       console.log("getDerivedStateFromProps ", nextProps, prevState);
       return {
+        ...prevState,
         tableData: nextProps.tableData,
         columns: nextProps.columns
       };
-    } else return null;
+    } else {
+      return prevState;
+    }
   }
 
   /** Handle page count */
-  handlePageChange = data => {
+  handlePageChange = (event, data) => {
     console.log("handlePageClick ", data);
     this.setState({
-      currentPage: data
+      currentPage: data.activePage
     });
   };
 
@@ -51,13 +56,14 @@ class CustomTable extends Component {
   filterData = () => {
     const { tableData, search, status, columns } = this.state;
     if (search !== "" && status !== "") {
-      console.log("search status ", search, status);
       const filteredData = tableData.filter(item => {
         for (let val of columns) {
           if (
             val.searchable === true &&
-            item[val.keyName].toLowerCase().indexOf(search.toLowerCase()) >=
-              0 &&
+            item[val.keyName]
+              .toString()
+              .toLowerCase()
+              .indexOf(search.toLowerCase()) >= 0 &&
             item.format === status
           )
             return true;
@@ -66,12 +72,14 @@ class CustomTable extends Component {
       });
       return filteredData;
     } else if (search !== "") {
-      console.log("search ", search);
       const filteredData = tableData.filter(item => {
         for (let val of columns) {
           if (
             val.searchable === true &&
-            item[val.keyName].toLowerCase().indexOf(search.toLowerCase()) >= 0
+            item[val.keyName]
+              .toString()
+              .toLowerCase()
+              .indexOf(search.toLowerCase()) >= 0
           )
             return true;
         }
@@ -167,7 +175,7 @@ class CustomTable extends Component {
     });
   };
 
-  /** Row per change input */
+  /** Grid.Row per change input */
   renderRowSelectInput = keyName => {
     const { statusOptions, selectedRow } = this.state;
     const rowDataOption = statusOptions.map(val => (
@@ -206,11 +214,6 @@ class CustomTable extends Component {
     );
   };
 
-  /** Get column key name */
-  render = () => {
-      
-  }
-
   /* render the table row */
   renderRow = () => {
     const { currentPage, dataPerPage, columns } = this.state;
@@ -248,64 +251,93 @@ class CustomTable extends Component {
 
     if (currentTodos.length === 0) {
       return (
-        <tr>
-          <td colSpan="5">
+        <Table.Row>
+          <Table.HeaderCell colSpan="5">
             <div className="alert alert-warning">It seems, no data found!</div>
-          </td>
-        </tr>
+          </Table.HeaderCell>
+        </Table.Row>
       );
-    }  
+    }
+    console.log("currentTodos ", currentTodos);
+    return currentTodos.map((rowData, rowkey) => {
+      console.log("rowData, key ", rowData, rowkey);
+      // const viewLabelText =
+      //   ViewLabel.charAt(0).toUpperCase() + ViewLabel.slice(1).toLowerCase();
+      // const previousRoutePath = "/".concat(viewLabelText.toLowerCase());
+      return (
+        <Table.Row key={`tblrow-${rowkey}`}>
+          {this.state.columns.map((tableColumnName, key) => {
+            console.log("tableColumnName, key ", tableColumnName, key);
+            if (tableColumnName === "editDelete") {
+              return null;
+            }
+            let value = rowData[tableColumnName.keyName];
+            if (value) {
+              value = value.toString();
+            }
 
-    return currentTodos.map((rowData, key) => {
-      console.log("rowData, key ", rowData, key);
-      if (rowData.isFormOpen) {
-        return (
-          <tr key={key}>
-            <td>{this.renderRowInputInput("sourceName")}</td>
-            <td>{this.renderRowInputInput("feedName")}</td>
-            <td>{this.renderRowInputInput("subFolder")}</td>
-            <td>{this.renderRowSelectInput("format")}</td>
-            <td className="d-flex justify-content-center">
-              <button
-                className="btn btn-primary"
-                type="submit"
-                onClick={() => this.updateRow(rowData.id)}
-              >
-                <i className="action-btn-icon far fa-check-circle"></i>
-                Update
-              </button>
-              <button
-                className="btn btn-danger"
-                type="button"
-                onClick={() => this.cancelEditRow(rowData.id)}
-              >
-                <i className="action-btn-icon fas fa-undo"></i>
-                Cancel
-              </button>
-            </td>
-          </tr>
-        );
-      } else {
-        return (
-          <tr key={key}>
-            <td>{rowData.sourceName}</td>
-            <td>{rowData.feedName}</td>
-            <td>{rowData.subFolder}</td>
-            <td>
-              {rowData.format} <Tooltip />
-            </td>
-            <td className="d-flex justify-content-center">
-              <a href="#" onClick={() => this.editRow(rowData.id)}>
-                <i className="action-icon far fa-edit"></i>
-              </a>
-              <a href="#" onClick={() => this.deleteRow(rowData.id)}>
-                <i className="action-icon far fa-trash-alt"></i>
-              </a>
-            </td>
-          </tr>
-        );
-      }
+            const sortColumnStyle = classNames({
+              "sort-enabled": sortedColumn.keyName === tableColumnName,
+              "highlighted-search-text":
+                value &&
+                value.includes(this.state.search) &&
+                this.state.search === "",
+              "text-right": value && !isNaN(parseInt(value))
+            });
+            return (
+              <Table.Cell key={`col-${key}`} className={sortColumnStyle}>
+                {rowData[tableColumnName.keyName]}
+              </Table.Cell>
+            );
+          })}
+          <Table.Cell className="d-flex justify-content-center modify-row-data">
+            <Route
+              render={({ history }) => {
+                return (
+                  <a
+                    className="action-icon modify-first-icon"
+                    onClick={event => {
+                      this.editRow(event, history, rowData);
+                    }}
+                  >
+                    <i className="fa edit-icon" />
+                  </a>
+                );
+              }}
+            />
+            <a
+              className="action-icon"
+              href="#"
+              onClick={event => {
+                this.handleDeleteClick(event, rowData.sourceId);
+              }}
+            >
+              <i className="fa delete-icon" />
+            </a>
+          </Table.Cell>
+        </Table.Row>
+      );
     });
+
+    /* return currentTodos.map((rowData, key) => {
+      console.log("rowData, key ", rowData, key);
+      return (
+        <Table.Row key={key}>
+          <Table.HeaderCell>{rowData.sourceName}</Table.HeaderCell>
+          <Table.HeaderCell>{rowData.feedName}</Table.HeaderCell>
+          <Table.HeaderCell>{rowData.subFolder}</Table.HeaderCell>
+          <Table.HeaderCell>{rowData.format}</Table.HeaderCell>
+          <Table.HeaderCell className="d-flex justify-content-center">
+            <a href="#" onClick={() => this.editRow(rowData.id)}>
+              <i className="action-icon far fa-edit"></i>
+            </a>
+            <a href="#" onClick={() => this.deleteRow(rowData.id)}>
+              <i className="action-icon far fa-trash-alt"></i>
+            </a>
+          </Table.HeaderCell>
+        </Table.Row>
+      );
+    }); */
   };
 
   /** Update search input */
@@ -324,7 +356,7 @@ class CustomTable extends Component {
     });
   };
 
-  /** Row per change input */
+  /** Grid.Row per change input */
   renderRowPerPage = () => {
     const { rowData, dataPerPage } = this.state;
     const rowDataOption = rowData.map(val => (
@@ -336,7 +368,7 @@ class CustomTable extends Component {
     return (
       <div className="form-group row">
         <div className="col-sm-12">
-          <span className="row-per-label">Row per page</span>
+          <span className="row-per-label">Grid.Row per page</span>
           <select
             className="form-control-sm"
             value={dataPerPage}
@@ -357,7 +389,7 @@ class CustomTable extends Component {
     });
   };
 
-  /** Row per change input */
+  /** Grid.Row per change input */
   renderStatusFilter = () => {
     let { status, statusOptions } = this.state;
     statusOptions = [...statusOptions];
@@ -437,67 +469,62 @@ class CustomTable extends Component {
         } else if (val.sort === false) dynamicClass = "sorting fas fa-sort-up";
       }
       return (
-        <th
+        <Table.HeaderCell
           key={`key${val.keyName}`}
           onClick={() => this.handleSorting(val.keyName, val.sortable)}
         >
           {val.label}
           <i className={dynamicClass}></i>
-        </th>
+        </Table.HeaderCell>
       );
     });
   };
 
   render() {
     return (
-      <div>
-        <Row>
-          <Col>
-            <h3>Source</h3>
-          </Col>
-          <Col>
-            <Row>
-              <Col>{this.renderStatusFilter()} </Col>
-              <Col xs={6}>
-                <div className="form-group row">
-                  <label className="col-sm-3 col-form-label">Search</label>{" "}
-                  <div className="col-sm-9">
-                    <input
-                      placeholder="Search"
-                      className="form-control"
-                      type="text"
-                      value={this.state.search}
-                      onChange={event =>
-                        this.handleSearchInput(event.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table striped bordered hover size="sm">
-              <thead>
-                <tr>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={4}></Grid.Column>
+          <Grid.Column width={4}>{this.renderStatusFilter()} </Grid.Column>
+          <Grid.Column width={8}>
+            <div className="form-group row">
+              <label className="col-sm-3 col-form-label">Search</label>{" "}
+              <div className="col-sm-9">
+                <input
+                  placeholder="Search"
+                  className="form-control"
+                  type="text"
+                  value={this.state.search}
+                  onChange={event => this.handleSearchInput(event.target.value)}
+                />
+              </div>
+            </div>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Table celled padded>
+              <Table.Header>
+                <Table.Row>
                   {this.renderColumns()}
-                  <td></td>
-                </tr>
-              </thead>
+                  <Table.HeaderCell></Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
               <tbody>{this.renderRow()}</tbody>
             </Table>
-          </Col>
-        </Row>
-        <Row>
-          <Col></Col>
-          <Col>
-            <Row>
-              <Col></Col>
-              <Col>{this.renderRowPerPage()}</Col>
-              <Col className="d-flex flex-row-reverse">
-                <Pagination
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={8}></Grid.Column>
+          <Grid.Column width={8}>
+            <Pagination
+              defaultActivePage={this.state.currentPage}
+              totalPages={this.filterData().length}
+              onPageChange={this.handlePageChange}
+              activePage={this.state.currentPage}
+              boundaryRange={5}
+            />
+            {/* <Pagination
                   activePage={this.state.currentPage}
                   itemsCountPerPage={this.state.dataPerPage}
                   totalItemsCount={this.filterData().length}
@@ -505,14 +532,12 @@ class CustomTable extends Component {
                   linkClass="page-link"
                   itemClass="page-item"
                   innerClass="pagination pagination-sm"
-                />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>
+                /> */}
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }
 
-export default CustomTable;
+export default withRouter(CustomTable);
