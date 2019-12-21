@@ -3,22 +3,31 @@ import {
   SIGNOUT,
   SIGNUP,
   USER_API_FAIL,
-  USER_API_REQUEST
+  USER_API_REQUEST,
+  ALLUSERS
 } from "../actions/consts";
 const initialState = {
   isAuthenticated: false,
   isLoading: false,
-  data: null
+  data: null,
+  allUsers: []
 };
 
 export default function UserReducer(state = initialState, action) {
   switch (action.type) {
+    case ALLUSERS:
+      return {
+        ...state,
+        isLoading: false,
+        allUsers: action.payload,
+      };
+
     case SIGNIN:
       return {
         ...state,
         isLoading: false,
         isAuthenticated: true,
-        data: action.payload
+        data: action.payload,
       };
     case SIGNOUT:
       return {

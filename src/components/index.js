@@ -19,6 +19,7 @@ import Dashboard from "./dashboard";
 import About from "./about";
 import NoPage from "./common/NoPage";
 import Sigup from "./signin/signup";
+import UserList from "./users/index";
 
 import languageContext from "../context/language";
 
@@ -52,6 +53,9 @@ function Routing(props) {
               </Route>
               <AuthRoute path="/dashboard">
                 <Dashboard />
+              </AuthRoute>
+              <AuthRoute path="/users">
+                <UserList />
               </AuthRoute>
               <Route path="*">
                 <NoPage />

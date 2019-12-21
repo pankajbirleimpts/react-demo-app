@@ -6,7 +6,8 @@ import {
   SIGNOUT,
   SIGNUP,
   USER_API_FAIL,
-  USER_API_REQUEST
+  USER_API_REQUEST,
+  ALLUSERS
 } from "./consts";
 
 import { BASE_URL, langs } from "../config";
@@ -31,6 +32,34 @@ export function updateUserStore(userData) {
   };
 }
 
+/** Get all users */
+export function getAllUsers() {
+  return dispatch => {
+    dispatch({
+      type: USER_API_REQUEST
+    });
+    axios
+      .get(`${BASE_URL}/users.json`, header)
+      .then(response => {
+        console.log("signin response ", response.data);
+        const usersData = firebaseResponseTransform(response.data);
+        const allUsers = usersData.filter(user => user.role === "EMPLOYEE");
+        dispatch({
+          type: ALLUSERS,
+          payload: allUsers
+        });
+      })
+      .catch(error => {
+       dispatch({
+          type: USER_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+}
+
+
+
 export function signin(user, callback) {
   return dispatch => {
     dispatch({
@@ -42,9 +71,17 @@ export function signin(user, callback) {
         console.log("signin response ", response.data);
         const usersData = firebaseResponseTransform(response.data);
         console.log("userData", usersData);
-        const loggedUser = usersData.find(
-          val => val.email == user.email && val.password == user.password
-        );
+        let loggedUser = false;
+        if (user.loginasadmin) {
+          loggedUser = usersData.find(
+            val => val.email == user.email && val.password == user.password && val.role === "ADMIN"
+          );
+        } else {
+          loggedUser = usersData.find(
+            val => val.email == user.email && val.password == user.password && val.role === "EMPLOYEE"
+          );
+        }
+
         console.log("loggedUser ", loggedUser);
         if (loggedUser) {
           dispatch({

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Grid } from "semantic-ui-react";
+import { Grid, Checkbox } from "semantic-ui-react";
 import { signin, signout } from "../../actions/UserAction";
 import { langs } from "../../config";
 import { Loader } from "../common";
@@ -56,6 +56,12 @@ class Signin extends Component {
           <Field name="password" type="password" />
           <ErrorMessage component="p" name="password" className="red" />
         </div>
+        <div className="field">
+          <div class="ui fitted toggle checkbox">
+            <Field name="loginasadmin" type="checkbox" readonly="" tabindex="0" />
+            <label></label>
+          </div>
+        </div>
         <button className="ui button primary" type="submit">
           Signin
         </button>
@@ -73,7 +79,8 @@ class Signin extends Component {
             <Formik
               initialValues={{
                 email: "",
-                password: ""
+                password: "",
+                loginasadmin: ""
               }}
               validationSchema={this.loginFormValidation()}
               onSubmit={values => {
