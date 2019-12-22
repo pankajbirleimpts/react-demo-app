@@ -36,7 +36,11 @@ function Header({ user, signout, history }) {
           <div className="ui secondary pointing menu">
             <MenuLink to="/" label="Home" />
             {user.isAuthenticated === true && (
-              <MenuLink to="/dashboard" label="Dashboard" />
+              <React.Fragment>
+                <MenuLink to="/dashboard" label="Dashboard" />
+                <MenuLink to="/users" label="Users" />
+                <MenuLink to="/items" label="Items" />
+              </React.Fragment>
             )}
             {user.isAuthenticated !== true && (
               <React.Fragment>

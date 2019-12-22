@@ -4,25 +4,29 @@ import { connect } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
-import { getItem, updateItem, addItem } from "../../actions/ItemAction";
+import SemanticDatepicker from 'react-semantic-ui-datepickers';
+import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+
+import { getItem, updateItem, addItem, getAllItems } from "../../actions/ItemAction";
 import { langs } from "../../config";
 import { Loader } from "../common";
 
 
-class AddItem extends Component {
+class DayItem extends Component {
 
   state = {
     id: "",
     initialValues: {
-      itemName: "",
-      description: "",
-      category: "",
-      amount: "",
-      isActive: ""
+      itemId: "",
+      itemDetails: null,
+      date: "",
+      totalQuantity: "",
+      remainingQuantity: ""
     }
   }
 
   componentDidMount() {
+    this.props.getAllItems();
     const { id } = this.props.match.params;
     if (id) {
       this.props.getItem(id, response => {
@@ -59,17 +63,11 @@ class AddItem extends Component {
    */
   formValidation = () => {
     return Yup.object().shape({
-      itemName: Yup.string()
-        .max(25, langs.messages.CHAR_MAX_LIMIT_25)
+      date: Yup.string()
         .required(langs.messages.REQUIRED),
-      description: Yup.string()
-        .max(300, langs.messages.CHAR_MAX_LIMIT_300)
+      itemId: Yup.string()
         .required(langs.messages.REQUIRED),
-      category: Yup.string()
-        .required(langs.messages.REQUIRED),
-      amount: Yup.number()
-        .required(langs.messages.REQUIRED),
-      isActive: Yup.string()
+      totalQuantity: Yup.number()
         .required(langs.messages.REQUIRED),
     });
   };
@@ -82,38 +80,26 @@ class AddItem extends Component {
     return (
       <Form noValidate className="ui form">
         <div className="field">
-          <label>Item Name *</label>
-          <Field name="itemName" type="text" />
-          <ErrorMessage component="p" name="itemName" className="red" />
+          <label>Date *</label>
+          <SemanticDatepicker locale="pt-BR" name="date"  />
+          <ErrorMessage component="p" name="date" className="red" />
         </div>
         <div className="field">
-          <label>Category *</label>
+          <label>Item *</label>
           <Field name="category" as="select">
             <option value="">Please Select</option>
-            <option value="Roti">Roti</option>
-            <option value="Juice">Juice</option>
-            <option value="Dal">Dal</option>
+            {
+              this.props.item.allItems.map(val => {
+                return <option key={val.id} value={val.id}>{val.itemName}</option>
+              })
+            }
           </Field>
           <ErrorMessage component="p" name="category" className="red" />
         </div>
         <div className="field">
-          <label>Amount *</label>
+          <label>Quantity *</label>
           <Field name="amount" type="number" />
           <ErrorMessage component="p" name="amount" className="red" />
-        </div>
-        <div className="field">
-          <label>Description *</label>
-          <Field name="description" as="textarea" />
-          <ErrorMessage component="p" name="description" className="red" />
-        </div>
-        <div className="field">
-          <label>Status *</label>
-          <Field name="isActive" as="select">
-            <option value="">Please Select</option>
-            <option value="Active">Active</option>
-            <option value="Deactivev">Deactive</option>
-          </Field>
-          <ErrorMessage component="p" name="isActive" className="red" />
         </div>
         <Link to="/items" className="ui button">
           Back to Items List
@@ -131,7 +117,7 @@ class AddItem extends Component {
         <Loader isLoading={this.props.item.isLoading} />
         <Grid.Row centered>
           <Grid.Column width="8">
-            <h2> {this.state.id !== "" ? "Update" : "Add"} Item</h2>
+            <h2> {this.state.id !== "" ? "Update" : "Add"} Day Item</h2>
             <Formik
               enableReinitialize
               initialValues={this.state.initialValues}
@@ -155,6 +141,6 @@ function mapStateToProp({ item }) {
   };
 }
 
-export default connect(mapStateToProp, { getItem, updateItem, addItem })(
-  withRouter(AddItem)
+export default connect(mapStateToProp, { getItem, updateItem, addItem, getAllItems })(
+  withRouter(DayItem)
 );

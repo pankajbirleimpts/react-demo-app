@@ -23,6 +23,7 @@ import UserList from "./users/index";
 import AddUser from "./users/AddUser";
 import AddItem from "./items/AddItem";
 import ItemList from "./items";
+import DayItem from "./items/DayItem";
 
 import languageContext from "../context/language";
 
@@ -75,7 +76,12 @@ function Routing(props) {
               <AuthRoute path="/items">
                 <ItemList />
               </AuthRoute>
-              
+              <AuthRoute path="/add-day-item">
+                <DayItem />
+              </AuthRoute>
+              <AuthRoute path="/update-day-item/:id">
+                <DayItem />
+              </AuthRoute>
               <Route path="*">
                 <NoPage />
               </Route>
