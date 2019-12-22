@@ -50,7 +50,7 @@ export function getAllUsers() {
         });
       })
       .catch(error => {
-       dispatch({
+        dispatch({
           type: USER_API_FAIL
         });
         toast.error(langs.messages.COMMON_ERROR);
@@ -81,8 +81,6 @@ export function signin(user, callback) {
             val => val.email == user.email && val.password == user.password && val.role === "EMPLOYEE"
           );
         }
-
-        console.log("loggedUser ", loggedUser);
         if (loggedUser) {
           dispatch({
             type: SIGNIN,
@@ -120,7 +118,7 @@ export function signout(callback) {
   };
 }
 
-export function signup(data, callback) {
+export function signup(data, callback, addUser = false) {
   return dispatch => {
     dispatch({
       type: USER_API_REQUEST
@@ -132,7 +130,11 @@ export function signup(data, callback) {
         dispatch({
           type: SIGNUP
         });
-        toast.success(langs.messages.SUCCESSFUL_SIGNUP);
+        if (addUser) {
+          toast.success(langs.messages.USER_ADDED);
+        } else {
+          toast.success(langs.messages.SUCCESSFUL_SIGNUP);
+        }
         callback();
       })
       .catch(error => {
@@ -144,3 +146,77 @@ export function signup(data, callback) {
       });
   };
 }
+
+
+
+export function updateUser(userId, data, callback) {
+  return dispatch => {
+    dispatch({
+      type: USER_API_REQUEST
+    });
+    axios
+      .put(`${BASE_URL}/users/${userId}.json`, data, header)
+      .then(response => {
+        console.log("signup response ", response);
+        dispatch({
+          type: SIGNUP
+        });
+        toast.success(langs.messages.USER_UPDATED);
+        callback();
+      })
+      .catch(error => {
+        console.log("signup error");
+        dispatch({
+          type: USER_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+}
+
+// delete a user 
+export function deleteUser(userId, callback) {
+  return dispatch => {
+    dispatch({
+      type: USER_API_REQUEST
+    });
+    axios
+      .delete(`${BASE_URL}/users/${userId}.json`, header)
+      .then(response => {
+        callback();
+        toast.success(langs.messages.USER_DELETED);
+      })
+      .catch(error => {
+        dispatch({
+          type: USER_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+
+}
+
+export function getUser(userId, callback) {
+  return dispatch => {
+    dispatch({
+      type: USER_API_REQUEST
+    });
+    axios
+      .get(`${BASE_URL}/users/${userId}.json`, header)
+      .then(response => {
+        console.log("signup response ", response);
+        dispatch({
+          type: SIGNUP
+        });
+        callback(response.data);
+      })
+      .catch(error => {
+        console.log("signup error");
+        dispatch({
+          type: USER_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+}
+

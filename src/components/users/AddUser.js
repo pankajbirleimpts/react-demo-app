@@ -1,57 +1,65 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { reactLocalStorage } from "reactjs-localstorage";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
-import { signin, signout, signup } from "../../actions/UserAction";
+import { getUser, signup, updateUser } from "../../actions/UserAction";
 import { langs } from "../../config";
 import { Loader } from "../common";
 
-function equalTo(ref, msg) {
-  return Yup.mixed().test({
-    name: "equalTo",
-    exclusive: false,
-    message: msg,
-    params: {
-      reference: ref.path
-    },
-    test: function(value) {
-      return value && value === this.resolve(ref);
-    }
-  });
-}
-Yup.addMethod(Yup.string, "equalTo", equalTo);
 
-class Signup extends Component {
-  
-  componentDidMount() {
-    const isAuthenticated = reactLocalStorage.get("isAuthenticated");
-    console.log("isAuthenticated ", isAuthenticated, typeof isAuthenticated);
-    if (isAuthenticated) {
-      this.props.history.replace("/dashboard");
+class AddUser extends Component {
+
+  state = {
+    id: "",
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      balance: "",
+      employeeId: "",
+      country: ""
     }
   }
 
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    this.props.getUser(id, response => {
+      console.log('response', response);
+      this.setState({
+        initialValues: response,
+        id
+      });
+    });
+  }
   /**
    * @formSubmitHandler
    * @desc: Submit the signup form
    */
   formSubmitHandler = values => {
     delete values.confirmPassword;
-    values.balance = 0;
     values.role = "EMPLOYEE";
-    this.props.signup(values, () => {
-      this.props.history.replace("/login");
-    });
+    if (this.state.id !== "") {
+      // Update user
+      this.props.updateUser(this.state.id, values, () => {
+        this.props.history.replace("/users");
+      }, true);
+    } else {
+      // Add User 
+      this.props.signup(values, () => {
+        this.props.history.replace("/users");
+      }, true);
+    }
   };
 
   /**
-   * @loginFormValidation
+   * @formValidation
    * @desc: form validation
    */
-  loginFormValidation = () => {
+  formValidation = () => {
     return Yup.object().shape({
       firstName: Yup.string()
         .max(25, langs.messages.CHAR_MAX_LIMIT_25)
@@ -62,9 +70,8 @@ class Signup extends Component {
       password: Yup.string()
         .min(8, langs.messages.CHAR_MIN_LIMIT_8)
         .required(langs.messages.REQUIRED),
-      confirmPassword: Yup.string()
-        .required(langs.messages.REQUIRED)
-        .equalTo(Yup.ref("password"), langs.messages.PASSWORD_NOT_MATCH),
+      balance: Yup.number()
+        .required(langs.messages.REQUIRED),
       email: Yup.string()
         .email(langs.messages.INVALID_EMAIL)
         .required(langs.messages.REQUIRED),
@@ -100,15 +107,17 @@ class Signup extends Component {
           <ErrorMessage component="p" name="email" className="red" />
         </div>
         <div className="field">
-          <label>Password</label>
-          <Field name="password" type="password" />
-          <ErrorMessage component="p" name="password" className="red" />
+          <label>Balance</label>
+          <Field name="balance" type="number" />
+          <ErrorMessage component="p" name="balance" className="red" />
         </div>
-        <div className="field">
-          <label>Confirm Password</label>
-          <Field name="confirmPassword" type="password" />
-          <ErrorMessage component="p" name="confirmPassword" className="red" />
-        </div>
+        {this.state.id === "" &&
+          <div className="field">
+            <label>Password</label>
+            <Field name="password" type="password" />
+            <ErrorMessage component="p" name="password" className="red" />
+          </div>
+        }
         <div className="field">
           <label>Location</label>
           <Field name="country" as="select">
@@ -119,8 +128,11 @@ class Signup extends Component {
           </Field>
           <ErrorMessage component="p" name="country" className="red" />
         </div>
+        <Link to="/users" className="ui button">
+          Back to Users List
+        </Link>
         <button className="ui button primary" type="submit">
-          Signin
+          {this.state.id !== "" ? "Update" : "Submit"}
         </button>
       </Form>
     );
@@ -132,18 +144,11 @@ class Signup extends Component {
         <Loader isLoading={this.props.user.isLoading} />
         <Grid.Row centered>
           <Grid.Column width="8">
-            <h2>Signup</h2>
+            <h2> {this.state.id !== "" ? "Update" : "Add"} User</h2>
             <Formik
-              initialValues={{
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                employeeId: "",
-                country: ""
-              }}
-              validationSchema={this.loginFormValidation()}
+              enableReinitialize
+              initialValues={this.state.initialValues}
+              validationSchema={this.formValidation()}
               onSubmit={values => {
                 this.formSubmitHandler(values);
               }}
@@ -163,6 +168,6 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(mapStateToProp, { signin, signout, signup })(
-  withRouter(Signup)
+export default connect(mapStateToProp, { getUser, signup, updateUser })(
+  withRouter(AddUser)
 );

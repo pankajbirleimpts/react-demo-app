@@ -8,10 +8,16 @@ const english = {
     CHAR_MAX_LIMIT_250: "Not allowed more than 250 charcters",
     SUCCESSFUL_SIGNUP:
       "You have been successfully signup. Please login to access your account!",
-      SUCCESSFUL_SIGNIN:
+    SUCCESSFUL_SIGNIN:
       "You have successfully signin.",
     COMMON_ERROR: "Something went wrong. Please try again later!",
-    INVALID_USERNAME_PASSWORD : 'It seems, invalid email address or password!'
+    INVALID_USERNAME_PASSWORD: 'It seems, invalid email address or password!',
+    USER_ADDED: "The user has been successfully added.",
+    USER_UPDATED: "The user has been successfully updated.",
+    USER_DELETED: "The user has been successfully deleted.",
+    ITEM_ADDED: "The item has been successfully added.",
+    ITEM_UPDATED: "The item has been successfully updated.",
+    ITEM_DELETED: "The item has been successfully deleted.",
   }
 };
 

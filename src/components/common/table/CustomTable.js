@@ -1,8 +1,13 @@
 import React, { Component } from "react";
-import { Header, Table, Rating, Grid, Pagination } from "semantic-ui-react";
+import { Header, Table, Icon, Grid, Pagination, Form, Input, Confirm } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 // import Pagination from "react-js-pagination";
 import { Route, withRouter } from "react-router-dom";
+import { deleteUser, getAllUsers } from "../../../actions/UserAction";
+import { deleteItem, getAllItems } from "../../../actions/ItemAction";
+import { connect } from "react-redux";
+import { confirmAlert } from 'react-confirm-alert';
 import "./CustomTable.css";
 
 class CustomTable extends Component {
@@ -96,14 +101,30 @@ class CustomTable extends Component {
 
   /** Delete a row */
   deleteRow = id => {
-    if (window.confirm("Are you sure want to delete it?")) {
-      const tableData = [...this.state.tableData]; // make a separate copy of the array
-      const index = tableData.findIndex(val => val.id === id);
-      if (index !== -1) {
-        tableData.splice(index, 1);
-        this.setState({ tableData });
-      }
-    }
+    confirmAlert({
+      title: 'Confirmation',
+      message: 'Are you sure to want delete it?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            if (this.props.module === 'USERS') {
+              this.props.deleteUser(id, () => {
+                this.props.getAllUsers();
+              });
+            } else if (this.props.module === 'ITEMS') {
+              // Delete items
+              this.props.deleteItem(id, () => {
+                this.props.getAllItems();
+              });
+            }
+          }
+        },
+        {
+          label: 'No',
+        }
+      ]
+    });
   };
 
   /** Edit a row */
@@ -216,6 +237,7 @@ class CustomTable extends Component {
 
   /* render the table row */
   renderRow = () => {
+    console.log("this.props", this.props);
     const { currentPage, dataPerPage, columns } = this.state;
     const indexOfLastTodo = currentPage * dataPerPage;
     const indexOfFirstTodo = indexOfLastTodo - dataPerPage;
@@ -224,7 +246,7 @@ class CustomTable extends Component {
     const sortedColumn = columns.find(val => val.sort !== null);
     console.log("sortedColumn ", sortedColumn);
     if (sortedColumn.sort === true) {
-      filterData = filterData.sort(function(a, b) {
+      filterData = filterData.sort(function (a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return -1;
         }
@@ -235,7 +257,7 @@ class CustomTable extends Component {
       });
       console.log("filterData true", filterData);
     } else if (sortedColumn.sort === false) {
-      filterData = filterData.sort(function(a, b) {
+      filterData = filterData.sort(function (a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return 1;
         }
@@ -258,7 +280,6 @@ class CustomTable extends Component {
         </Table.Row>
       );
     }
-    console.log("currentTodos ", currentTodos);
     return currentTodos.map((rowData, rowkey) => {
       console.log("rowData, key ", rowData, rowkey);
       // const viewLabelText =
@@ -291,53 +312,37 @@ class CustomTable extends Component {
             );
           })}
           <Table.Cell className="d-flex justify-content-center modify-row-data">
-            <Route
-              render={({ history }) => {
-                return (
-                  <a
-                    className="action-icon modify-first-icon"
-                    onClick={event => {
-                      this.editRow(event, history, rowData);
-                    }}
-                  >
-                    <i className="fa edit-icon" />
-                  </a>
-                );
-              }}
-            />
+            {
+              this.props.module === "ITEMS" &&
+              <Link
+                to={{
+                  pathname: `/update-item/${rowData.id}`,
+                }}
+              ><Icon name='edit' /></Link>
+            }
+            {
+              this.props.module === "USERS" &&
+              <Link
+                to={{
+                  pathname: `/update-user/${rowData.id}`,
+                }}
+              >
+                <Icon name='edit' />
+              </Link>
+            }
             <a
               className="action-icon"
-              href="#"
+              href="javascript:void(0)"
               onClick={event => {
-                this.handleDeleteClick(event, rowData.sourceId);
+                this.deleteRow(rowData.id);
               }}
             >
-              <i className="fa delete-icon" />
+              <Icon name='trash alternate' />
             </a>
           </Table.Cell>
         </Table.Row>
       );
     });
-
-    /* return currentTodos.map((rowData, key) => {
-      console.log("rowData, key ", rowData, key);
-      return (
-        <Table.Row key={key}>
-          <Table.HeaderCell>{rowData.sourceName}</Table.HeaderCell>
-          <Table.HeaderCell>{rowData.feedName}</Table.HeaderCell>
-          <Table.HeaderCell>{rowData.subFolder}</Table.HeaderCell>
-          <Table.HeaderCell>{rowData.format}</Table.HeaderCell>
-          <Table.HeaderCell className="d-flex justify-content-center">
-            <a href="#" onClick={() => this.editRow(rowData.id)}>
-              <i className="action-icon far fa-edit"></i>
-            </a>
-            <a href="#" onClick={() => this.deleteRow(rowData.id)}>
-              <i className="action-icon far fa-trash-alt"></i>
-            </a>
-          </Table.HeaderCell>
-        </Table.Row>
-      );
-    }); */
   };
 
   /** Update search input */
@@ -463,10 +468,10 @@ class CustomTable extends Component {
     return columns.map(val => {
       let dynamicClass = "";
       if (val.sortable) {
-        dynamicClass = "sorting fas fa-sort";
+        dynamicClass = "sort";
         if (val.sort === true) {
-          dynamicClass = "sorting fas fa-sort-down";
-        } else if (val.sort === false) dynamicClass = "sorting fas fa-sort-up";
+          dynamicClass = "sort down";
+        } else if (val.sort === false) dynamicClass = "sort up";
       }
       return (
         <Table.HeaderCell
@@ -474,7 +479,7 @@ class CustomTable extends Component {
           onClick={() => this.handleSorting(val.keyName, val.sortable)}
         >
           {val.label}
-          <i className={dynamicClass}></i>
+          <Icon name={dynamicClass} />
         </Table.HeaderCell>
       );
     });
@@ -485,20 +490,19 @@ class CustomTable extends Component {
       <Grid>
         <Grid.Row>
           <Grid.Column width={4}></Grid.Column>
-          <Grid.Column width={4}>{this.renderStatusFilter()} </Grid.Column>
-          <Grid.Column width={8}>
-            <div className="form-group row">
-              <label className="col-sm-3 col-form-label">Search</label>{" "}
-              <div className="col-sm-9">
-                <input
-                  placeholder="Search"
-                  className="form-control"
+          <Grid.Column width={4}> </Grid.Column>
+          <Grid.Column width={8} textAlign="right">
+            <Form>
+              <Form.Field inline>
+                <label>Search</label>
+                <Input placeholder='Please search here..'
                   type="text"
+                  className="search-input"
                   value={this.state.search}
                   onChange={event => this.handleSearchInput(event.target.value)}
                 />
-              </div>
-            </div>
+              </Form.Field>
+            </Form>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -516,7 +520,7 @@ class CustomTable extends Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={8}></Grid.Column>
-          <Grid.Column width={8}>
+          <Grid.Column width={8} textAlign="right">
             <Pagination
               defaultActivePage={this.state.currentPage}
               totalPages={this.filterData().length}
@@ -540,4 +544,8 @@ class CustomTable extends Component {
   }
 }
 
-export default withRouter(CustomTable);
+const mapStateToProps = state => {
+
+}
+
+export default connect(mapStateToProps, { deleteUser, getAllUsers, deleteItem, getAllItems })(withRouter(CustomTable));

@@ -1,50 +1,47 @@
 import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { reactLocalStorage } from "reactjs-localstorage";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { Grid, Checkbox } from "semantic-ui-react";
-import { getAllUsers } from "../../actions/UserAction";
+import { getAllItems } from "../../actions/ItemAction";
 import { langs } from "../../config";
 import { Loader, CustomTable } from "../common";
 
-class UserList extends Component {
+class ItemList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       columns: [
         {
-          label: "First Name",
-          keyName: "firstName",
+          label: "Item Name",
+          keyName: "itemName",
           sort: true,
           searchable: true,
           sortable: true
         },
         {
-          label: "Last Name",
-          keyName: "lastName",
+          label: "Category",
+          keyName: "category",
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Email",
-          keyName: "email",
+          label: "Status",
+          keyName: "isActive",
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Employee Id",
-          keyName: "employeeId",
+          label: "Amount",
+          keyName: "amount",
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Balance",
-          keyName: "balance",
+          label: "Description",
+          keyName: "description",
           sort: null,
           searchable: true,
           sortable: true
@@ -54,27 +51,27 @@ class UserList extends Component {
   }
 
   componentDidMount() {
-    this.props.getAllUsers();
+    this.props.getAllItems();
   }
 
   formSubmitHandler = values => { };
 
   render() {
-    console.log("this.props.user ", this.props.user);
+    console.log("this.props.item ", this.props.item);
     return (
       <Grid>
-        <Loader isLoading={this.props.user.isLoading} />
+        <Loader isLoading={this.props.item.isLoading} />
         <Grid.Row>
-          <Grid.Column width={8} textAlign="left"><h3>Manage Users</h3></Grid.Column>
-          <Grid.Column width={8} textAlign="right"><Link to="/add-user" className="ui button primary">+ Add User</Link></Grid.Column>
+          <Grid.Column width={8} textAlign="left"><h3>Manage Items</h3></Grid.Column>
+          <Grid.Column width={8} textAlign="right"><Link to="/add-item" className="ui button primary">+ Add item</Link></Grid.Column>
         </Grid.Row>
 
 
         <Grid.Row centered>
           <CustomTable
             columns={this.state.columns}
-            tableData={this.props.user.allUsers}
-            module="USERS"
+            tableData={this.props.item.allItems}
+            module="ITEMS"
           />
         </Grid.Row>
       </Grid>
@@ -82,10 +79,10 @@ class UserList extends Component {
   }
 }
 
-function mapStateToProp({ user }) {
+function mapStateToProp({ item }) {
   return {
-    user
+    item
   };
 }
 
-export default connect(mapStateToProp, { getAllUsers })(withRouter(UserList));
+export default connect(mapStateToProp, { getAllItems })(withRouter(ItemList));

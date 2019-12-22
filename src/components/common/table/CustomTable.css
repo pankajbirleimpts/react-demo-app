@@ -24,5 +24,7 @@
 .btn-circle{
   border-radius: 50%;
 }
-
+.search-input{
+  margin-right: 16px;
+}
 

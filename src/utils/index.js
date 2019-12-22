@@ -10,9 +10,11 @@ import { Link, useRouteMatch } from "react-router-dom";
 export function firebaseResponseTransform(response) {
   console.log("response", response, typeof response);
   const result = [];
-  Object.keys(response).forEach(key => {
-    result.push({ ...response[key], id: key });
-  });
+  if (response) {
+    Object.keys(response).forEach(key => {
+      result.push({ ...response[key], id: key });
+    });
+  }
   return result;
 }
 

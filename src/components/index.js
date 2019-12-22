@@ -20,12 +20,15 @@ import About from "./about";
 import NoPage from "./common/NoPage";
 import Sigup from "./signin/signup";
 import UserList from "./users/index";
+import AddUser from "./users/AddUser";
+import AddItem from "./items/AddItem";
+import ItemList from "./items";
 
 import languageContext from "../context/language";
 
 function Routing(props) {
   /** Check the localstorage have information of logged user */
-  (function() {
+  (function () {
     const loggedUser = reactLocalStorage.get("loggedUser");
     if (loggedUser && props.user.isAuthenticated === false) {
       props.updateUserStore(JSON.parse(loggedUser));
@@ -57,6 +60,22 @@ function Routing(props) {
               <AuthRoute path="/users">
                 <UserList />
               </AuthRoute>
+              <AuthRoute path="/add-user">
+                <AddUser />
+              </AuthRoute>
+              <AuthRoute path="/update-user/:id">
+                <AddUser />
+              </AuthRoute>
+              <AuthRoute path="/add-item">
+                <AddItem />
+              </AuthRoute>
+              <AuthRoute path="/update-item/:id">
+                <AddItem />
+              </AuthRoute>
+              <AuthRoute path="/items">
+                <ItemList />
+              </AuthRoute>
+              
               <Route path="*">
                 <NoPage />
               </Route>
@@ -84,13 +103,13 @@ const AuthRouteFn = ({ children, user, ...rest }) => {
         user.isAuthenticated ? (
           children
         ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location }
+              }}
+            />
+          )
       }
     />
   );
