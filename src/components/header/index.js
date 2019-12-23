@@ -40,6 +40,7 @@ function Header({ user, signout, history }) {
                 <MenuLink to="/dashboard" label="Dashboard" />
                 <MenuLink to="/users" label="Users" />
                 <MenuLink to="/items" label="Items" />
+                <MenuLink to="/day-items" label="Day Items" />
               </React.Fragment>
             )}
             {user.isAuthenticated !== true && (

@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { Header, Table, Icon, Grid, Pagination, Form, Input, Confirm } from "semantic-ui-react";
+import {
+  Header,
+  Table,
+  Icon,
+  Grid,
+  Pagination,
+  Form,
+  Input,
+  Confirm
+} from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 // import Pagination from "react-js-pagination";
@@ -7,7 +16,7 @@ import { Route, withRouter } from "react-router-dom";
 import { deleteUser, getAllUsers } from "../../../actions/UserAction";
 import { deleteItem, getAllItems } from "../../../actions/ItemAction";
 import { connect } from "react-redux";
-import { confirmAlert } from 'react-confirm-alert';
+import { confirmAlert } from "react-confirm-alert";
 import "./CustomTable.css";
 
 class CustomTable extends Component {
@@ -100,19 +109,20 @@ class CustomTable extends Component {
   };
 
   /** Delete a row */
-  deleteRow = id => {
+  deleteRow = (event, id) => {
+    event.preventDefault();
     confirmAlert({
-      title: 'Confirmation',
-      message: 'Are you sure to want delete it?',
+      title: "Confirmation",
+      message: "Are you sure to want delete it?",
       buttons: [
         {
-          label: 'Yes',
+          label: "Yes",
           onClick: () => {
-            if (this.props.module === 'USERS') {
+            if (this.props.module === "USERS") {
               this.props.deleteUser(id, () => {
                 this.props.getAllUsers();
               });
-            } else if (this.props.module === 'ITEMS') {
+            } else if (this.props.module === "ITEMS") {
               // Delete items
               this.props.deleteItem(id, () => {
                 this.props.getAllItems();
@@ -121,7 +131,7 @@ class CustomTable extends Component {
           }
         },
         {
-          label: 'No',
+          label: "No"
         }
       ]
     });
@@ -246,7 +256,7 @@ class CustomTable extends Component {
     const sortedColumn = columns.find(val => val.sort !== null);
     console.log("sortedColumn ", sortedColumn);
     if (sortedColumn.sort === true) {
-      filterData = filterData.sort(function (a, b) {
+      filterData = filterData.sort(function(a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return -1;
         }
@@ -257,7 +267,7 @@ class CustomTable extends Component {
       });
       console.log("filterData true", filterData);
     } else if (sortedColumn.sort === false) {
-      filterData = filterData.sort(function (a, b) {
+      filterData = filterData.sort(function(a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return 1;
         }
@@ -312,32 +322,41 @@ class CustomTable extends Component {
             );
           })}
           <Table.Cell className="d-flex justify-content-center modify-row-data">
-            {
-              this.props.module === "ITEMS" &&
+            {this.props.module === "ITEMS" && (
               <Link
                 to={{
-                  pathname: `/update-item/${rowData.id}`,
-                }}
-              ><Icon name='edit' /></Link>
-            }
-            {
-              this.props.module === "USERS" &&
-              <Link
-                to={{
-                  pathname: `/update-user/${rowData.id}`,
+                  pathname: `/update-item/${rowData.id}`
                 }}
               >
-                <Icon name='edit' />
+                <Icon name="edit" />
               </Link>
-            }
+            )}
+            {this.props.module === "DAYITEMS" && (
+              <Link
+                to={{
+                  pathname: `/update-day-item/${rowData.id}`
+                }}
+              >
+                <Icon name="edit" />
+              </Link>
+            )}
+            {this.props.module === "USERS" && (
+              <Link
+                to={{
+                  pathname: `/update-user/${rowData.id}`
+                }}
+              >
+                <Icon name="edit" />
+              </Link>
+            )}
             <a
               className="action-icon"
-              href="javascript:void(0)"
+              href="#"
               onClick={event => {
-                this.deleteRow(rowData.id);
+                this.deleteRow(event, rowData.id);
               }}
             >
-              <Icon name='trash alternate' />
+              <Icon name="trash alternate" />
             </a>
           </Table.Cell>
         </Table.Row>
@@ -495,7 +514,8 @@ class CustomTable extends Component {
             <Form>
               <Form.Field inline>
                 <label>Search</label>
-                <Input placeholder='Please search here..'
+                <Input
+                  placeholder="Please search here.."
                   type="text"
                   className="search-input"
                   value={this.state.search}
@@ -544,8 +564,11 @@ class CustomTable extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = state => {};
 
-}
-
-export default connect(mapStateToProps, { deleteUser, getAllUsers, deleteItem, getAllItems })(withRouter(CustomTable));
+export default connect(mapStateToProps, {
+  deleteUser,
+  getAllUsers,
+  deleteItem,
+  getAllItems
+})(withRouter(CustomTable));

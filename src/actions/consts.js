@@ -9,3 +9,4 @@ export const ITEM_API_FAIL = "ITEM_API_FAIL";
 export const ITEM_API_REQUEST = "ITEM_API_REQUEST";
 export const ALLITEMS = "ALLITEMS";
 export const ITEM_API_SUCCESS = "ITEM_API_SUCCESS";
+export const ALLDAYITEMS = "ALLDAYITEMS";

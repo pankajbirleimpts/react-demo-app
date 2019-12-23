@@ -4,33 +4,37 @@ import { connect } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
-import SemanticDatepicker from 'react-semantic-ui-datepickers';
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css';
+import SemanticDatepicker from "react-semantic-ui-datepickers";
+import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
 
-import { getItem, updateItem, addItem, getAllItems } from "../../actions/ItemAction";
+import {
+  getAllItems,
+  addDayItem,
+  updateDayItem,
+  getDayItem
+} from "../../actions/ItemAction";
 import { langs } from "../../config";
 import { Loader } from "../common";
-
+import "./dayitem.css";
 
 class DayItem extends Component {
-
   state = {
     id: "",
     initialValues: {
       itemId: "",
       itemDetails: null,
       date: "",
-      totalQuantity: "",
-      remainingQuantity: ""
+      totalQuantity: 0,
+      remainingQuantity: 0
     }
-  }
+  };
 
   componentDidMount() {
     this.props.getAllItems();
     const { id } = this.props.match.params;
     if (id) {
-      this.props.getItem(id, response => {
-        console.log('response', response);
+      this.props.getDayItem(id, response => {
+        console.log("response", response);
         this.setState({
           initialValues: response,
           id
@@ -43,16 +47,24 @@ class DayItem extends Component {
    * @desc: Submit the signup form
    */
   formSubmitHandler = values => {
-    delete values.confirmPassword;
+    console.log("formSubmitHandler values ", values);
+    values.itemDetails = this.props.item.allItems.find(
+      val => val.id === values.itemId
+    );
     if (this.state.id !== "") {
       // Update item
-      this.props.updateItem(this.state.id, values, () => {
-        this.props.history.replace("/items");
-      }, true);
+      this.props.updateDayItem(
+        this.state.id,
+        values,
+        () => {
+          this.props.history.replace("/day-items");
+        },
+        true
+      );
     } else {
-      // Add Item 
-      this.props.addItem(values, () => {
-        this.props.history.replace("/items");
+      // Add Item
+      this.props.addDayItem(values, () => {
+        this.props.history.replace("/day-items");
       });
     }
   };
@@ -63,12 +75,9 @@ class DayItem extends Component {
    */
   formValidation = () => {
     return Yup.object().shape({
-      date: Yup.string()
-        .required(langs.messages.REQUIRED),
-      itemId: Yup.string()
-        .required(langs.messages.REQUIRED),
-      totalQuantity: Yup.number()
-        .required(langs.messages.REQUIRED),
+      date: Yup.string().required(langs.messages.REQUIRED),
+      itemId: Yup.string().required(langs.messages.REQUIRED),
+      totalQuantity: Yup.number().required(langs.messages.REQUIRED)
     });
   };
 
@@ -81,27 +90,35 @@ class DayItem extends Component {
       <Form noValidate className="ui form">
         <div className="field">
           <label>Date *</label>
-          <SemanticDatepicker locale="pt-BR" name="date"  />
+          <SemanticDatepicker
+            format="DD-MMM-YYYY"
+            name="date"
+            onChange={(e, { name, value }) => {
+              setFieldValue("date", value);
+            }}
+          />
           <ErrorMessage component="p" name="date" className="red" />
         </div>
         <div className="field">
           <label>Item *</label>
-          <Field name="category" as="select">
+          <Field name="itemId" as="select">
             <option value="">Please Select</option>
-            {
-              this.props.item.allItems.map(val => {
-                return <option key={val.id} value={val.id}>{val.itemName}</option>
-              })
-            }
+            {this.props.item.allItems.map(val => {
+              return (
+                <option key={val.id} value={val.id}>
+                  {val.itemName}
+                </option>
+              );
+            })}
           </Field>
-          <ErrorMessage component="p" name="category" className="red" />
+          <ErrorMessage component="p" name="itemId" className="red" />
         </div>
         <div className="field">
           <label>Quantity *</label>
-          <Field name="amount" type="number" />
-          <ErrorMessage component="p" name="amount" className="red" />
+          <Field name="totalQuantity" type="number" />
+          <ErrorMessage component="p" name="totalQuantity" className="red" />
         </div>
-        <Link to="/items" className="ui button">
+        <Link to="/day-items" className="ui button">
           Back to Items List
         </Link>
         <button className="ui button primary" type="submit">
@@ -115,7 +132,7 @@ class DayItem extends Component {
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
-        <Grid.Row centered>
+        <Grid.Row centered className="add-day-item-container">
           <Grid.Column width="8">
             <h2> {this.state.id !== "" ? "Update" : "Add"} Day Item</h2>
             <Formik
@@ -141,6 +158,9 @@ function mapStateToProp({ item }) {
   };
 }
 
-export default connect(mapStateToProp, { getItem, updateItem, addItem, getAllItems })(
-  withRouter(DayItem)
-);
+export default connect(mapStateToProp, {
+  addDayItem,
+  updateDayItem,
+  getDayItem,
+  getAllItems
+})(withRouter(DayItem));

@@ -24,12 +24,13 @@ import AddUser from "./users/AddUser";
 import AddItem from "./items/AddItem";
 import ItemList from "./items";
 import DayItem from "./items/DayItem";
+import DayItemList from "./items/DayItemList";
 
 import languageContext from "../context/language";
 
 function Routing(props) {
   /** Check the localstorage have information of logged user */
-  (function () {
+  (function() {
     const loggedUser = reactLocalStorage.get("loggedUser");
     if (loggedUser && props.user.isAuthenticated === false) {
       props.updateUserStore(JSON.parse(loggedUser));
@@ -82,6 +83,9 @@ function Routing(props) {
               <AuthRoute path="/update-day-item/:id">
                 <DayItem />
               </AuthRoute>
+              <AuthRoute path="/day-items">
+                <DayItemList />
+              </AuthRoute>
               <Route path="*">
                 <NoPage />
               </Route>
@@ -109,13 +113,13 @@ const AuthRouteFn = ({ children, user, ...rest }) => {
         user.isAuthenticated ? (
           children
         ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: { from: location }
-              }}
-            />
-          )
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
       }
     />
   );

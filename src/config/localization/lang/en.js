@@ -18,6 +18,9 @@ const english = {
     ITEM_ADDED: "The item has been successfully added.",
     ITEM_UPDATED: "The item has been successfully updated.",
     ITEM_DELETED: "The item has been successfully deleted.",
+    DAY_ITEM_UPDATED: "The day item has been successfully updated.",
+    DAY_ITEM_ADDED: "The day item has been successfully added.",
+    DAY_ITEM_DELETED: "The day item has been successfully deleted.",
   }
 };
 
