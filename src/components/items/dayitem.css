@@ -1,3 +1,18 @@
-.add-day-item-container .field{
-    width: 100%;
+.add-day-item-container .field {
+  width: 100%;
+}
+.show-amount {
+  position: absolute;
+  right: -64px;
+  top: 106px;
+  font-weight: bold;
+  color: green;
+}
+.show-total-amount {
+  position: absolute;
+  left: 555px;
+  top: 182px;
+  font-weight: bold;
+  color: green;
+  width: 232px;
 }

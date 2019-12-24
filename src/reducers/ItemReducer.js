@@ -3,12 +3,14 @@ import {
   ITEM_API_SUCCESS,
   ITEM_API_REQUEST,
   ALLITEMS,
-  ALLDAYITEMS
+  ALLDAYITEMS,
+  ALLTRANSACTION
 } from "../actions/consts";
 const initialState = {
   isLoading: false,
   allItems: [],
-  allDayItems: []
+  allDayItems: [],
+  allTransactions: []
 };
 
 export default function ItemsReducer(state = initialState, action) {
@@ -39,6 +41,12 @@ export default function ItemsReducer(state = initialState, action) {
         ...state,
         isLoading: false,
         allDayItems: action.payload
+      };
+    case ALLTRANSACTION:
+      return {
+        ...state,
+        isLoading: false,
+        allTransactions: action.payload
       };
     default:
       return state;

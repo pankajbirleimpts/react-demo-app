@@ -7,7 +7,8 @@ import {
   ITEM_API_REQUEST,
   ALLITEMS,
   ITEM_API_SUCCESS,
-  ALLDAYITEMS
+  ALLDAYITEMS,
+  ALLTRANSACTION
 } from "./consts";
 
 import { BASE_URL, langs } from "../config";
@@ -249,6 +250,64 @@ export function getDayItem(itemId, callback) {
           type: ITEM_API_SUCCESS
         });
         callback(response.data);
+      })
+      .catch(error => {
+        dispatch({
+          type: ITEM_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+}
+
+// Purchase a item
+export function purchaseItem(data, callback) {
+  return dispatch => {
+    dispatch({
+      type: ITEM_API_REQUEST
+    });
+    axios
+      .post(`${BASE_URL}/purchaseItems.json`, data, header)
+      .then(response => {
+        dispatch({
+          type: ITEM_API_SUCCESS
+        });
+        toast.success(langs.messages.ITEM_PURCHASED);
+        callback();
+      })
+      .catch(error => {
+        dispatch({
+          type: ITEM_API_FAIL
+        });
+        toast.error(langs.messages.COMMON_ERROR);
+      });
+  };
+}
+
+/** Get all Day Transations  */
+export function getAllTransactions() {
+  return dispatch => {
+    dispatch({
+      type: ITEM_API_REQUEST
+    });
+    axios
+      .get(`${BASE_URL}/purchaseItems.json`, header)
+      .then(response => {
+        const itemsData = firebaseResponseTransform(response.data);
+        const allTransactions = itemsData.map(val => {
+          return {
+            ...val,
+            itemName: val.itemDetails.itemName,
+            category: val.itemDetails.category,
+            amount: val.itemDetails.amount,
+            userName: `${val.userDetails.firstName} ${val.userDetails.lastName}`
+          };
+        });
+        console.log("Get all transation ", allTransactions);
+        dispatch({
+          type: ALLTRANSACTION,
+          payload: allTransactions
+        });
       })
       .catch(error => {
         dispatch({

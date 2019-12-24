@@ -25,6 +25,8 @@ import AddItem from "./items/AddItem";
 import ItemList from "./items";
 import DayItem from "./items/DayItem";
 import DayItemList from "./items/DayItemList";
+import PurchaseItem from "./items/PurchaseItem";
+import TransactionList from "./items/TransactionList";
 
 import languageContext from "../context/language";
 
@@ -85,6 +87,12 @@ function Routing(props) {
               </AuthRoute>
               <AuthRoute path="/day-items">
                 <DayItemList />
+              </AuthRoute>
+              <AuthRoute path="/purchase-item">
+                <PurchaseItem />
+              </AuthRoute>
+              <AuthRoute path="/transactions">
+                <TransactionList />
               </AuthRoute>
               <Route path="*">
                 <NoPage />

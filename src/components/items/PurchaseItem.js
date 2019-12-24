@@ -9,37 +9,33 @@ import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
 import moment from "moment";
 import {
   getAllItems,
-  addDayItem,
-  updateDayItem,
+  purchaseItem,
   getDayItem
 } from "../../actions/ItemAction";
+import { getAllUsers } from "../../actions/UserAction";
 import { langs } from "../../config";
 import { Loader } from "../common";
 import "./dayitem.css";
-class DayItem extends Component {
+
+class PurchaseItem extends Component {
   state = {
     id: "",
     initialValues: {
       itemId: "",
+      userId: "",
+      userDetails: null,
       itemDetails: null,
       date: "",
-      totalQuantity: 0,
-      remainingQuantity: 0
+      quantity: 0,
+      amount: 0
     }
   };
 
   componentDidMount() {
+    // Get all items
     this.props.getAllItems();
-    const { id } = this.props.match.params;
-    if (id) {
-      this.props.getDayItem(id, response => {
-        response.date = moment(response.date, "DD-MMM-YYYY").toDate();
-        this.setState({
-          initialValues: response,
-          id
-        });
-      });
-    }
+    // get all users
+    this.props.getAllUsers();
   }
   /**
    * @formSubmitHandler
@@ -49,23 +45,16 @@ class DayItem extends Component {
     values.itemDetails = this.props.item.allItems.find(
       val => val.id === values.itemId
     );
-    values.date = moment(values.date).format("DD-MMM-YYYY");
-    if (this.state.id !== "") {
-      // Update item
-      this.props.updateDayItem(
-        this.state.id,
-        values,
-        () => {
-          this.props.history.replace("/day-items");
-        },
-        true
-      );
-    } else {
-      // Add Item
-      this.props.addDayItem(values, () => {
-        this.props.history.replace("/day-items");
-      });
-    }
+    values.userDetails = this.props.user.allUsers.find(
+      val => val.id === values.userId
+    );
+    values.date = moment().format("DD-MMM-YYYY");
+    values.purchaseAmount = this.getTotalAmount(values.itemId, values.quantity);
+    console.log("formSubmitHandler values ", values);
+    // Add Item
+    this.props.purchaseItem(values, () => {
+       this.props.history.push("/transations");
+    });
   };
 
   /**
@@ -74,31 +63,54 @@ class DayItem extends Component {
    */
   formValidation = () => {
     return Yup.object().shape({
-      date: Yup.string().required(langs.messages.REQUIRED),
+      userId: Yup.string().required(langs.messages.REQUIRED),
       itemId: Yup.string().required(langs.messages.REQUIRED),
-      totalQuantity: Yup.number().required(langs.messages.REQUIRED)
+      quantity: Yup.number().required(langs.messages.REQUIRED)
     });
+  };
+
+  // Get item amount
+  getItemAmount = itemId => {
+    if (itemId) {
+      const selectedItem = this.props.item.allItems.find(
+        val => val.id === itemId
+      );
+      if (selectedItem) {
+        return selectedItem.amount;
+      }
+      return 0;
+    }
+    return 0;
+  };
+
+  //Get total amount
+  getTotalAmount = (itemId, quantity) => {
+    const itemPrice = this.getItemAmount(itemId);
+    return (itemPrice * quantity).toFixed(2);
   };
 
   /**
    * @renderForm
    * @desc: rednder form
    */
-  renderForm = ({ values, setFieldValue }) => {
-    console.log("values ", values);
+  renderForm = ({ values }) => {
     return (
       <Form noValidate className="ui form">
         <div className="field">
-          <label>Date *</label>
-          <SemanticDatepicker
-            format="DD-MMM-YYYY"
-            name="date"
-            value={values.date}
-            onChange={(e, { name, value }) => {
-              setFieldValue("date", value);
-            }}
-          />
-          <ErrorMessage component="p" name="date" className="red" />
+          <label>User *</label>
+          <Field name="userId" as="select">
+            <option value="">Please Select</option>
+            {this.props.user.allUsers
+              .filter(val => val.role === "EMPLOYEE")
+              .map(val => {
+                return (
+                  <option key={val.id} value={val.id}>
+                    {val.firstName} {val.lastName}
+                  </option>
+                );
+              })}
+          </Field>
+          <ErrorMessage component="p" name="userId" className="red" />
         </div>
         <div className="field">
           <label>Item *</label>
@@ -113,11 +125,21 @@ class DayItem extends Component {
             })}
           </Field>
           <ErrorMessage component="p" name="itemId" className="red" />
+          {this.getItemAmount(values.itemId) > 0 && (
+            <div className="show-amount">
+              Rs. {this.getItemAmount(values.itemId)}
+            </div>
+          )}
         </div>
         <div className="field">
           <label>Quantity *</label>
-          <Field name="totalQuantity" type="number" />
-          <ErrorMessage component="p" name="totalQuantity" className="red" />
+          <Field name="quantity" type="number" />
+          <ErrorMessage component="p" name="quantity" className="red" />
+          {this.getTotalAmount(values.itemId, values.quantity) > 0 && (
+            <div className="show-total-amount">
+              Total: Rs. {this.getTotalAmount(values.itemId, values.quantity)}
+            </div>
+          )}
         </div>
         <Link to="/day-items" className="ui button">
           Back to Items List
@@ -153,15 +175,16 @@ class DayItem extends Component {
   }
 }
 
-function mapStateToProp({ item }) {
+function mapStateToProp({ item, user }) {
   return {
-    item
+    item,
+    user
   };
 }
 
 export default connect(mapStateToProp, {
-  addDayItem,
-  updateDayItem,
+  purchaseItem,
   getDayItem,
-  getAllItems
-})(withRouter(DayItem));
+  getAllItems,
+  getAllUsers
+})(withRouter(PurchaseItem));

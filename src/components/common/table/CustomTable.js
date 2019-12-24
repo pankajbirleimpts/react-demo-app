@@ -14,7 +14,12 @@ import classNames from "classnames";
 // import Pagination from "react-js-pagination";
 import { Route, withRouter } from "react-router-dom";
 import { deleteUser, getAllUsers } from "../../../actions/UserAction";
-import { deleteItem, getAllItems } from "../../../actions/ItemAction";
+import {
+  deleteItem,
+  getAllItems,
+  deleteDayItem,
+  getAllDayItems
+} from "../../../actions/ItemAction";
 import { connect } from "react-redux";
 import { confirmAlert } from "react-confirm-alert";
 import "./CustomTable.css";
@@ -45,9 +50,7 @@ class CustomTable extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log("nextProps, prevState ", nextProps, prevState);
     if (nextProps.tableData !== prevState.tableData) {
-      console.log("getDerivedStateFromProps ", nextProps, prevState);
       return {
         ...prevState,
         tableData: nextProps.tableData,
@@ -60,7 +63,6 @@ class CustomTable extends Component {
 
   /** Handle page count */
   handlePageChange = (event, data) => {
-    console.log("handlePageClick ", data);
     this.setState({
       currentPage: data.activePage
     });
@@ -101,7 +103,6 @@ class CustomTable extends Component {
       });
       return filteredData;
     } else if (status !== "") {
-      console.log("status ", status);
       const filteredData = tableData.filter(item => item.format === status);
       return filteredData;
     }
@@ -127,6 +128,11 @@ class CustomTable extends Component {
               this.props.deleteItem(id, () => {
                 this.props.getAllItems();
               });
+            } else if (this.props.module === "DAYITEMS") {
+              // Delete items
+              this.props.deleteDayItem(id, () => {
+                this.props.getAllDayItems();
+              });
             }
           }
         },
@@ -151,7 +157,6 @@ class CustomTable extends Component {
     newTableData[index].isFormOpen = true;
     if (index !== -1) {
       const selectedRow = newTableData.find(val => val.id === id);
-      console.log("newTableData ", newTableData);
       this.setState({
         selectedRow,
         tableData: newTableData
@@ -163,7 +168,6 @@ class CustomTable extends Component {
   updateRow = id => {
     const { selectedRow, error } = this.state;
     if (!error) {
-      console.log("updateRow selectedRow ", selectedRow);
       const tableData = [...this.state.tableData]; // make a separate copy of the array
       const newTableData = tableData.map(val => {
         if (val.id === id) {
@@ -247,14 +251,12 @@ class CustomTable extends Component {
 
   /* render the table row */
   renderRow = () => {
-    console.log("this.props", this.props);
     const { currentPage, dataPerPage, columns } = this.state;
     const indexOfLastTodo = currentPage * dataPerPage;
     const indexOfFirstTodo = indexOfLastTodo - dataPerPage;
     let filterData = this.filterData();
     /* Sorting data */
     const sortedColumn = columns.find(val => val.sort !== null);
-    console.log("sortedColumn ", sortedColumn);
     if (sortedColumn.sort === true) {
       filterData = filterData.sort(function(a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
@@ -265,7 +267,6 @@ class CustomTable extends Component {
         }
         return 0;
       });
-      console.log("filterData true", filterData);
     } else if (sortedColumn.sort === false) {
       filterData = filterData.sort(function(a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
@@ -276,7 +277,6 @@ class CustomTable extends Component {
         }
         return 0;
       });
-      console.log("filterData false", filterData);
     }
 
     const currentTodos = filterData.slice(indexOfFirstTodo, indexOfLastTodo);
@@ -291,14 +291,12 @@ class CustomTable extends Component {
       );
     }
     return currentTodos.map((rowData, rowkey) => {
-      console.log("rowData, key ", rowData, rowkey);
       // const viewLabelText =
       //   ViewLabel.charAt(0).toUpperCase() + ViewLabel.slice(1).toLowerCase();
       // const previousRoutePath = "/".concat(viewLabelText.toLowerCase());
       return (
         <Table.Row key={`tblrow-${rowkey}`}>
           {this.state.columns.map((tableColumnName, key) => {
-            console.log("tableColumnName, key ", tableColumnName, key);
             if (tableColumnName === "editDelete") {
               return null;
             }
@@ -321,44 +319,46 @@ class CustomTable extends Component {
               </Table.Cell>
             );
           })}
-          <Table.Cell className="d-flex justify-content-center modify-row-data">
-            {this.props.module === "ITEMS" && (
-              <Link
-                to={{
-                  pathname: `/update-item/${rowData.id}`
+          {this.props.module !== "TRANSACTIONS" && (
+            <Table.Cell className="d-flex justify-content-center modify-row-data">
+              {this.props.module === "ITEMS" && (
+                <Link
+                  to={{
+                    pathname: `/update-item/${rowData.id}`
+                  }}
+                >
+                  <Icon name="edit" />
+                </Link>
+              )}
+              {this.props.module === "DAYITEMS" && (
+                <Link
+                  to={{
+                    pathname: `/update-day-item/${rowData.id}`
+                  }}
+                >
+                  <Icon name="edit" />
+                </Link>
+              )}
+              {this.props.module === "USERS" && (
+                <Link
+                  to={{
+                    pathname: `/update-user/${rowData.id}`
+                  }}
+                >
+                  <Icon name="edit" />
+                </Link>
+              )}
+              <a
+                className="action-icon"
+                href="#"
+                onClick={event => {
+                  this.deleteRow(event, rowData.id);
                 }}
               >
-                <Icon name="edit" />
-              </Link>
-            )}
-            {this.props.module === "DAYITEMS" && (
-              <Link
-                to={{
-                  pathname: `/update-day-item/${rowData.id}`
-                }}
-              >
-                <Icon name="edit" />
-              </Link>
-            )}
-            {this.props.module === "USERS" && (
-              <Link
-                to={{
-                  pathname: `/update-user/${rowData.id}`
-                }}
-              >
-                <Icon name="edit" />
-              </Link>
-            )}
-            <a
-              className="action-icon"
-              href="#"
-              onClick={event => {
-                this.deleteRow(event, rowData.id);
-              }}
-            >
-              <Icon name="trash alternate" />
-            </a>
-          </Table.Cell>
+                <Icon name="trash alternate" />
+              </a>
+            </Table.Cell>
+          )}
         </Table.Row>
       );
     });
@@ -447,11 +447,9 @@ class CustomTable extends Component {
   handleSorting = (selected, sortable) => {
     /** If sorting is not availalbe then return  */
     if (!sortable) return false;
-    console.log("selected ", selected);
     const { columns } = this.state;
     const updatedColumns = columns.map(val => {
       if (val.keyName === selected && val.sort === null) {
-        console.log("al.keyName ", val.sort);
         return {
           ...val,
           sort: true
@@ -478,7 +476,6 @@ class CustomTable extends Component {
     this.setState({
       columns: updatedColumns
     });
-    console.log("updatedColumns ", updatedColumns);
   };
 
   /* Render coloumn */
@@ -531,7 +528,9 @@ class CustomTable extends Component {
               <Table.Header>
                 <Table.Row>
                   {this.renderColumns()}
-                  <Table.HeaderCell></Table.HeaderCell>
+                  {this.props.module !== "TRANSACTIONS" && (
+                    <Table.HeaderCell></Table.HeaderCell>
+                  )}
                 </Table.Row>
               </Table.Header>
               <tbody>{this.renderRow()}</tbody>
@@ -570,5 +569,7 @@ export default connect(mapStateToProps, {
   deleteUser,
   getAllUsers,
   deleteItem,
-  getAllItems
+  getAllItems,
+  deleteDayItem,
+  getAllDayItems
 })(withRouter(CustomTable));
