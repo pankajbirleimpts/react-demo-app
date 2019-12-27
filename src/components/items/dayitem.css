@@ -3,15 +3,25 @@
 }
 .show-amount {
   position: absolute;
-  right: -64px;
+  left: 541px;
   top: 106px;
   font-weight: bold;
   color: green;
+  width: 300px;
+  margin-left: 12px;
 }
 .show-total-amount {
   position: absolute;
   left: 555px;
   top: 182px;
+  font-weight: bold;
+  color: green;
+  width: 232px;
+}
+.show-user-balance {
+  position: absolute;
+  left: 555px;
+  top: 33px;
   font-weight: bold;
   color: green;
   width: 232px;

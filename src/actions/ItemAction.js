@@ -1,7 +1,7 @@
-import { reactLocalStorage } from "reactjs-localstorage";
-import axios from "axios";
-import { toast } from "react-toastify";
-import moment from "moment";
+import { reactLocalStorage } from 'reactjs-localstorage';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import moment from 'moment';
 import {
   ITEM_API_FAIL,
   ITEM_API_REQUEST,
@@ -9,14 +9,14 @@ import {
   ITEM_API_SUCCESS,
   ALLDAYITEMS,
   ALLTRANSACTION
-} from "./consts";
+} from './consts';
 
-import { BASE_URL, langs } from "../config";
-import { firebaseResponseTransform } from "../utils";
+import { BASE_URL, langs } from '../config';
+import { firebaseResponseTransform } from '../utils';
 
 const header = {
   headers: {
-    "Content-Type": "application/json"
+    'Content-Type': 'application/json'
   }
 };
 /** Get all Items */
@@ -28,7 +28,7 @@ export function getAllItems() {
     axios
       .get(`${BASE_URL}/items.json`, header)
       .then(response => {
-        console.log("items response ", response.data);
+        console.log('items response ', response.data);
         const itemsData = firebaseResponseTransform(response.data);
         dispatch({
           type: ALLITEMS,
@@ -82,7 +82,7 @@ export function updateItem(itemId, data, callback) {
         callback();
       })
       .catch(error => {
-        console.log("signup error");
+        console.log('signup error');
         dispatch({
           type: ITEM_API_FAIL
         });
@@ -135,26 +135,27 @@ export function getItem(itemId, callback) {
 }
 
 /** Get all Day Items */
-export function getAllDayItems() {
+export function getAllDayItems(date = '') {
   return dispatch => {
     dispatch({
       type: ITEM_API_REQUEST
     });
+    const params = date !== '' ? `?orderBy="date"&equalTo="${date}"` : '';
     axios
-      .get(`${BASE_URL}/dayItems.json`, header)
+      .get(`${BASE_URL}/dayItems.json${params}`, header)
       .then(response => {
         const itemsData = firebaseResponseTransform(response.data);
-        console.log("all day items response ", itemsData);
+        console.log('all day items response ', itemsData);
         const dayItems = itemsData.map(val => {
           return {
             ...val,
-            date: moment(val.date).format("DD-MMM-YYYY"),
+            date: moment(val.date).format('DD-MMM-YYYY'),
             itemName: val.itemDetails.itemName,
             category: val.itemDetails.category,
             amount: val.itemDetails.amount
           };
         });
-        console.log("all day items ", dayItems);
+        console.log('all day items ', dayItems);
         dispatch({
           type: ALLDAYITEMS,
           payload: dayItems
@@ -208,7 +209,7 @@ export function updateDayItem(itemId, data, callback) {
         callback();
       })
       .catch(error => {
-        console.log("signup error");
+        console.log('signup error');
         dispatch({
           type: ITEM_API_FAIL
         });
@@ -261,13 +262,29 @@ export function getDayItem(itemId, callback) {
 }
 
 // Purchase a item
-export function purchaseItem(data, callback) {
+export function purchaseItem(userData, transactionData, dayItem, callback) {
   return dispatch => {
     dispatch({
       type: ITEM_API_REQUEST
     });
-    axios
-      .post(`${BASE_URL}/purchaseItems.json`, data, header)
+    const updateUserBalance = axios.put(
+      `${BASE_URL}/users/${userData.id}.json`,
+      userData,
+      header
+    );
+    const purchaseItem = axios.post(
+      `${BASE_URL}/purchaseItems.json`,
+      transactionData,
+      header
+    );
+
+    const dayItemRequest = axios.put(
+      `${BASE_URL}/dayItems/${dayItem.id}.json`,
+      dayItem,
+      header
+    );
+
+    Promise.all([updateUserBalance, purchaseItem, dayItemRequest])
       .then(response => {
         dispatch({
           type: ITEM_API_SUCCESS
@@ -285,13 +302,14 @@ export function purchaseItem(data, callback) {
 }
 
 /** Get all Day Transations  */
-export function getAllTransactions() {
+export function getAllTransactions(userId = '') {
   return dispatch => {
     dispatch({
       type: ITEM_API_REQUEST
     });
+    const params = userId !== '' ? `?orderBy="userId"&equalTo="${userId}"` : '';
     axios
-      .get(`${BASE_URL}/purchaseItems.json`, header)
+      .get(`${BASE_URL}/purchaseItems.json${params}`, header)
       .then(response => {
         const itemsData = firebaseResponseTransform(response.data);
         const allTransactions = itemsData.map(val => {
@@ -303,7 +321,7 @@ export function getAllTransactions() {
             userName: `${val.userDetails.firstName} ${val.userDetails.lastName}`
           };
         });
-        console.log("Get all transation ", allTransactions);
+        console.log('Get all transation ', allTransactions);
         dispatch({
           type: ALLTRANSACTION,
           payload: allTransactions

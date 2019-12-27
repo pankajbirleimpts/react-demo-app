@@ -1,30 +1,47 @@
+.pagination {
+  margin-right: 15px;
+}
+.pagination ul,
+.pagination li {
+  display: inline-block;
+  text-decoration: none;
+}
+.pagination li a {
+  padding: 11px;
+  line-height: 10px;
+  margin-left: -1px;
+  border: 1px solid grey;
+  color: rgba(0, 0, 0, 0.87);
+}
+table {
+  background-color: red;
+}
 .sorting {
   font-size: 18px;
   float: right;
 }
 .sorting.fa-sort {
   color: #bab4b4;
-} 
-.action-icon{
+}
+.action-icon {
   color: #3e3edb;
   font-size: 20px;
   margin: 5px 10px;
 }
-.action-btn-icon{
+.action-btn-icon {
   color: #ffffff;
   margin: 0 5px;
 }
-.error{
+.error {
   color: red;
 }
-.row-per-label{
+.row-per-label {
   font-size: 15px;
   margin-right: 10px;
 }
-.btn-circle{
+.btn-circle {
   border-radius: 50%;
 }
-.search-input{
+.search-input {
   margin-right: 16px;
 }
-

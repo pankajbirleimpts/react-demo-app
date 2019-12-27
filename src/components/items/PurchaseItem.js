@@ -1,39 +1,41 @@
-import React, { Component } from "react";
-import { withRouter, Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Grid } from "semantic-ui-react";
-import SemanticDatepicker from "react-semantic-ui-datepickers";
-import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
-import moment from "moment";
+import React, { Component } from 'react';
+import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Grid } from 'semantic-ui-react';
+import moment from 'moment';
+import { toast } from 'react-toastify';
 import {
   getAllItems,
   purchaseItem,
-  getDayItem
-} from "../../actions/ItemAction";
-import { getAllUsers } from "../../actions/UserAction";
-import { langs } from "../../config";
-import { Loader } from "../common";
-import "./dayitem.css";
+  getDayItem,
+  getAllDayItems
+} from '../../actions/ItemAction';
+import { getAllUsers } from '../../actions/UserAction';
+import { langs } from '../../config';
+import { Loader } from '../common';
+import './dayitem.css';
 
 class PurchaseItem extends Component {
   state = {
-    id: "",
+    id: '',
+    otherTransaction: false,
     initialValues: {
-      itemId: "",
-      userId: "",
+      itemId: '',
+      userId: '',
       userDetails: null,
       itemDetails: null,
-      date: "",
-      quantity: 0,
+      date: '',
+      quantity: '',
       amount: 0
     }
   };
 
   componentDidMount() {
     // Get all items
-    this.props.getAllItems();
+    const todayDate = moment().format('DD-MMM-YYYY');
+    this.props.getAllDayItems(todayDate);
     // get all users
     this.props.getAllUsers();
   }
@@ -42,18 +44,54 @@ class PurchaseItem extends Component {
    * @desc: Submit the signup form
    */
   formSubmitHandler = values => {
-    values.itemDetails = this.props.item.allItems.find(
+    const dayItem = this.props.item.allDayItems.find(
       val => val.id === values.itemId
     );
-    values.userDetails = this.props.user.allUsers.find(
+    const userDetails = this.props.user.allUsers.find(
       val => val.id === values.userId
     );
-    values.date = moment().format("DD-MMM-YYYY");
-    values.purchaseAmount = this.getTotalAmount(values.itemId, values.quantity);
-    console.log("formSubmitHandler values ", values);
-    // Add Item
-    this.props.purchaseItem(values, () => {
-       this.props.history.push("/transations");
+    const purchaseAmount = this.getTotalAmount(values.itemId, values.quantity);
+    // If user do not have sufficient balance
+    if (this.getUserBalance(userDetails.id) < purchaseAmount) {
+      toast.warn(langs.messages.INSUFFICIENT_BALANCE);
+      return false;
+    }
+
+    const remainingQuantity = dayItem.remainingQuantity + values.quantity;
+    if (remainingQuantity > dayItem.totalQuantity) {
+      toast.warn(langs.messages.INSUFFICIENT_QUANTITY);
+      return false;
+    }
+    // Update remaining quantity
+    dayItem.remainingQuantity = remainingQuantity;
+    // Update user balance
+    userDetails.balance = userDetails.balance - purchaseAmount;
+
+    values.userDetails = userDetails;
+    values.itemDetails = dayItem.itemDetails;
+    values.date = moment().format('DD-MMM-YYYY');
+    values.purchaseAmount = purchaseAmount;
+
+    this.props.purchaseItem(userDetails, values, dayItem, () => {
+      const state = this.state;
+      if (state.otherTransaction) {
+        const initialValues = {
+          ...this.state.initialValues,
+          userId: values.userId,
+          amount: ''
+        };
+        this.setState({ initialValues, otherTransaction: false });
+      } else {
+        this.setState({
+          otherTransaction: false,
+          initialValues: {
+            ...this.state.initialValues,
+            userId: '',
+            amount: '',
+            itemId: ''
+          }
+        });
+      }
     });
   };
 
@@ -65,18 +103,44 @@ class PurchaseItem extends Component {
     return Yup.object().shape({
       userId: Yup.string().required(langs.messages.REQUIRED),
       itemId: Yup.string().required(langs.messages.REQUIRED),
-      quantity: Yup.number().required(langs.messages.REQUIRED)
+      quantity: Yup.number()
+        .required(langs.messages.REQUIRED)
+        .test(
+          'quantityValidation',
+          langs.messages.QUANTITY_VALIDATION,
+          function(value) {
+            if (value > 0) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        )
     });
   };
 
   // Get item amount
   getItemAmount = itemId => {
     if (itemId) {
-      const selectedItem = this.props.item.allItems.find(
+      const selectedItem = this.props.item.allDayItems.find(
         val => val.id === itemId
       );
       if (selectedItem) {
         return selectedItem.amount;
+      }
+      return 0;
+    }
+    return 0;
+  };
+
+  // Get item remaining quantity
+  getItemRemainQuantity = itemId => {
+    if (itemId) {
+      const selectedItem = this.props.item.allDayItems.find(
+        val => val.id === itemId
+      );
+      if (selectedItem) {
+        return selectedItem.totalQuantity - selectedItem.remainingQuantity;
       }
       return 0;
     }
@@ -89,19 +153,36 @@ class PurchaseItem extends Component {
     return (itemPrice * quantity).toFixed(2);
   };
 
+  handleClickMakeOtherTransaction = () => {
+    this.setState({
+      otherTransaction: true
+    });
+  };
+
+  getUserBalance = userId => {
+    if (userId) {
+      const userDetails = this.props.user.allUsers.find(
+        user => user.id === userId
+      );
+      if (userDetails) return userDetails.balance;
+      return 0;
+    }
+    return 0;
+  };
+
   /**
    * @renderForm
    * @desc: rednder form
    */
   renderForm = ({ values }) => {
     return (
-      <Form noValidate className="ui form">
-        <div className="field">
+      <Form noValidate className='ui form'>
+        <div className='field'>
           <label>User *</label>
-          <Field name="userId" as="select">
-            <option value="">Please Select</option>
+          <Field name='userId' as='select'>
+            <option value=''>Please Select</option>
             {this.props.user.allUsers
-              .filter(val => val.role === "EMPLOYEE")
+              .filter(val => val.role === 'EMPLOYEE')
               .map(val => {
                 return (
                   <option key={val.id} value={val.id}>
@@ -110,13 +191,18 @@ class PurchaseItem extends Component {
                 );
               })}
           </Field>
-          <ErrorMessage component="p" name="userId" className="red" />
+          {values.userId && (
+            <div className='show-user-balance'>
+              Current Balance: Rs. {this.getUserBalance(values.userId)}
+            </div>
+          )}
+          <ErrorMessage component='p' name='userId' className='red' />
         </div>
-        <div className="field">
+        <div className='field'>
           <label>Item *</label>
-          <Field name="itemId" as="select">
-            <option value="">Please Select</option>
-            {this.props.item.allItems.map(val => {
+          <Field name='itemId' as='select'>
+            <option value=''>Please Select</option>
+            {this.props.item.allDayItems.map(val => {
               return (
                 <option key={val.id} value={val.id}>
                   {val.itemName}
@@ -124,28 +210,38 @@ class PurchaseItem extends Component {
               );
             })}
           </Field>
-          <ErrorMessage component="p" name="itemId" className="red" />
+          <ErrorMessage component='p' name='itemId' className='red' />
           {this.getItemAmount(values.itemId) > 0 && (
-            <div className="show-amount">
-              Rs. {this.getItemAmount(values.itemId)}
+            <div className='show-amount'>
+              Rs. {this.getItemAmount(values.itemId)} {'   '}(Remaining Qty:{' '}
+              {this.getItemRemainQuantity(values.itemId)})
             </div>
           )}
         </div>
-        <div className="field">
+        <div className='field'>
           <label>Quantity *</label>
-          <Field name="quantity" type="number" />
-          <ErrorMessage component="p" name="quantity" className="red" />
+          <Field name='quantity' type='number' />
+          <ErrorMessage component='p' name='quantity' className='red' />
           {this.getTotalAmount(values.itemId, values.quantity) > 0 && (
-            <div className="show-total-amount">
+            <div className='show-total-amount'>
               Total: Rs. {this.getTotalAmount(values.itemId, values.quantity)}
             </div>
           )}
         </div>
-        <Link to="/day-items" className="ui button">
-          Back to Items List
+        <Link to='/transactions' className='ui button'>
+          Transactions
         </Link>
-        <button className="ui button primary" type="submit">
-          {this.state.id !== "" ? "Update" : "Submit"}
+        <button className='ui button primary' type='submit'>
+          Submit
+        </button>
+        <button
+          className='ui button primary'
+          type='submit'
+          onClick={() => {
+            this.handleClickMakeOtherTransaction();
+          }}
+        >
+          Submit & Make Other Transaction
         </button>
       </Form>
     );
@@ -155,9 +251,9 @@ class PurchaseItem extends Component {
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
-        <Grid.Row centered className="add-day-item-container">
-          <Grid.Column width="8">
-            <h2> {this.state.id !== "" ? "Update" : "Add"} Day Item</h2>
+        <Grid.Row centered className='add-day-item-container'>
+          <Grid.Column width='8'>
+            <h2> {this.state.id !== '' ? 'Update' : 'Add'} Day Item</h2>
             <Formik
               enableReinitialize
               initialValues={this.state.initialValues}
@@ -176,6 +272,7 @@ class PurchaseItem extends Component {
 }
 
 function mapStateToProp({ item, user }) {
+  console.log('mapStateToProp item ', item);
   return {
     item,
     user
@@ -186,5 +283,6 @@ export default connect(mapStateToProp, {
   purchaseItem,
   getDayItem,
   getAllItems,
-  getAllUsers
+  getAllUsers,
+  getAllDayItems
 })(withRouter(PurchaseItem));

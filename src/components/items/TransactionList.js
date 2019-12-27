@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { withRouter, Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { Grid, Checkbox } from "semantic-ui-react";
-import { getAllTransactions } from "../../actions/ItemAction";
-import { langs } from "../../config";
-import { Loader, CustomTable } from "../common";
+import React, { Component } from 'react';
+import { withRouter, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Grid, Checkbox } from 'semantic-ui-react';
+import { getAllTransactions } from '../../actions/ItemAction';
+import { langs } from '../../config';
+import { Loader, CustomTable } from '../common';
 
 class TransactionList extends Component {
   constructor(props) {
@@ -12,66 +12,68 @@ class TransactionList extends Component {
     this.state = {
       columns: [
         {
-          label: "User Name",
-          keyName: "userName",
+          label: 'User Name',
+          keyName: 'userName',
           sort: true,
           searchable: true,
           sortable: true
         },
         {
-          label: "Item name",
-          keyName: "itemName",
+          label: 'Item name',
+          keyName: 'itemName',
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Category",
-          keyName: "category",
+          label: 'Category',
+          keyName: 'category',
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Date",
-          keyName: "date",
+          label: 'Date',
+          keyName: 'date',
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Rate",
-          keyName: "amount",
+          label: 'Rate',
+          keyName: 'amount',
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Quantity",
-          keyName: "quantity",
+          label: 'Quantity',
+          keyName: 'quantity',
           sort: null,
           searchable: true,
           sortable: true
         },
         {
-          label: "Total Amount",
-          keyName: "purchaseAmount",
+          label: 'Total Amount',
+          keyName: 'purchaseAmount',
           sort: null,
           searchable: true,
           sortable: true
-        }        
+        }
       ]
     };
   }
 
   componentDidMount() {
-    this.props.getAllTransactions();
+    const { user } = this.props;
+    const userId = user.data.role === 'EMPLOYEE' ? user.data.id : '';
+    this.props.getAllTransactions(userId);
   }
 
-  formSubmitHandler = values => { };
+  formSubmitHandler = values => {};
 
   render() {
-    console.log("this.props.item ", this.props.item);
+    console.log('this.props.item ', this.props.item);
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
@@ -79,7 +81,7 @@ class TransactionList extends Component {
           <CustomTable
             columns={this.state.columns}
             tableData={this.props.item.allTransactions}
-            module="TRANSACTIONS"
+            module='TRANSACTIONS'
           />
         </Grid.Row>
       </Grid>
@@ -87,10 +89,13 @@ class TransactionList extends Component {
   }
 }
 
-function mapStateToProp({ item }) {
+function mapStateToProp({ item, user }) {
   return {
-    item
+    item,
+    user
   };
 }
 
-export default connect(mapStateToProp, { getAllTransactions })(withRouter(TransactionList));
+export default connect(mapStateToProp, { getAllTransactions })(
+  withRouter(TransactionList)
+);

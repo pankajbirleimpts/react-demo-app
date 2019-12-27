@@ -1,39 +1,41 @@
-import React from "react";
+import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect
-} from "react-router-dom";
-import { connect } from "react-redux";
-import { reactLocalStorage } from "reactjs-localstorage";
-import "semantic-ui-css/semantic.min.css";
-import { Container } from "semantic-ui-react";
+} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { reactLocalStorage } from 'reactjs-localstorage';
+import 'semantic-ui-css/semantic.min.css';
+import { toast } from 'react-toastify';
+import { Container } from 'semantic-ui-react';
 
-import { updateUserStore } from "../actions/UserAction";
+import { updateUserStore } from '../actions/UserAction';
 
-import Header from "./header";
-import Login from "./signin";
-import Home from "./home";
-import Dashboard from "./dashboard";
-import About from "./about";
-import NoPage from "./common/NoPage";
-import Sigup from "./signin/signup";
-import UserList from "./users/index";
-import AddUser from "./users/AddUser";
-import AddItem from "./items/AddItem";
-import ItemList from "./items";
-import DayItem from "./items/DayItem";
-import DayItemList from "./items/DayItemList";
-import PurchaseItem from "./items/PurchaseItem";
-import TransactionList from "./items/TransactionList";
+import Header from './header';
+import Login from './signin';
+import Home from './home';
+import Dashboard from './dashboard';
+import About from './about';
+import NoPage from './common/NoPage';
+import Sigup from './signin/signup';
+import UserList from './users/index';
+import AddUser from './users/AddUser';
+import AddItem from './items/AddItem';
+import ItemList from './items';
+import DayItem from './items/DayItem';
+import DayItemList from './items/DayItemList';
+import PurchaseItem from './items/PurchaseItem';
+import TransactionList from './items/TransactionList';
+import { langs } from '../config';
 
-import languageContext from "../context/language";
+import languageContext from '../context/language';
 
 function Routing(props) {
   /** Check the localstorage have information of logged user */
   (function() {
-    const loggedUser = reactLocalStorage.get("loggedUser");
+    const loggedUser = reactLocalStorage.get('loggedUser');
     if (loggedUser && props.user.isAuthenticated === false) {
       props.updateUserStore(JSON.parse(loggedUser));
     }
@@ -44,57 +46,57 @@ function Routing(props) {
       <languageContext.Provider>
         <Router>
           <Header />
-          <div className="ui segment">
+          <div className='ui segment'>
             <Switch>
-              <Route exact path="/">
+              <Route exact path='/'>
                 <Home />
               </Route>
-              <Route path="/about">
+              <Route path='/about'>
                 <About />
               </Route>
-              <Route path="/login">
+              <Route path='/login'>
                 <Login />
               </Route>
-              <Route path="/signup">
+              <Route path='/signup'>
                 <Sigup />
               </Route>
-              <AuthRoute path="/dashboard">
+              <AuthRoute path='/dashboard'>
                 <Dashboard />
               </AuthRoute>
-              <AuthRoute path="/users">
+              <AuthRoute path='/users' permission='ADMIN'>
                 <UserList />
               </AuthRoute>
-              <AuthRoute path="/add-user">
+              <AuthRoute path='/add-user' permission='ADMIN'>
                 <AddUser />
               </AuthRoute>
-              <AuthRoute path="/update-user/:id">
+              <AuthRoute path='/update-user/:id' permission='ADMIN'>
                 <AddUser />
               </AuthRoute>
-              <AuthRoute path="/add-item">
+              <AuthRoute path='/add-item' permission='ADMIN'>
                 <AddItem />
               </AuthRoute>
-              <AuthRoute path="/update-item/:id">
+              <AuthRoute path='/update-item/:id' permission='ADMIN'>
                 <AddItem />
               </AuthRoute>
-              <AuthRoute path="/items">
+              <AuthRoute path='/items' permission='ADMIN'>
                 <ItemList />
               </AuthRoute>
-              <AuthRoute path="/add-day-item">
+              <AuthRoute path='/add-day-item' permission='ADMIN'>
                 <DayItem />
               </AuthRoute>
-              <AuthRoute path="/update-day-item/:id">
+              <AuthRoute path='/update-day-item/:id' permission='ADMIN'>
                 <DayItem />
               </AuthRoute>
-              <AuthRoute path="/day-items">
+              <AuthRoute path='/day-items' permission='ADMIN'>
                 <DayItemList />
               </AuthRoute>
-              <AuthRoute path="/purchase-item">
+              <AuthRoute path='/purchase-item' permission='ADMIN'>
                 <PurchaseItem />
               </AuthRoute>
-              <AuthRoute path="/transactions">
+              <AuthRoute path='/transactions'>
                 <TransactionList />
               </AuthRoute>
-              <Route path="*">
+              <Route path='*'>
                 <NoPage />
               </Route>
             </Switch>
@@ -112,21 +114,27 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, { updateUserStore })(Routing);
 
 // screen if you're not yet authenticated.
-const AuthRouteFn = ({ children, user, ...rest }) => {
-  console.log("AuthRouteFn user ", user);
+const AuthRouteFn = ({ children, permission, user, ...rest }) => {
+  console.log('AuthRouteFn user ', user);
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        user.isAuthenticated ? (
+        (user.isAuthenticated && permission === undefined) ||
+        (user.isAuthenticated &&
+          permission !== undefined &&
+          permission === user.data.role) ? (
           children
         ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
+          <React.Fragment>
+            {toast.warn(langs.messages.PERMISSION_MSG)}
+            <Redirect
+              to={{
+                pathname: '/login',
+                state: { from: location }
+              }}
+            />
+          </React.Fragment>
         )
       }
     />

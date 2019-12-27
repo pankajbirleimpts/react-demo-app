@@ -1,47 +1,47 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
+import './CustomTable.css';
 import {
   Header,
   Table,
   Icon,
   Grid,
-  Pagination,
+  // Pagination,
   Form,
   Input,
   Confirm
-} from "semantic-ui-react";
-import { Link } from "react-router-dom";
-import classNames from "classnames";
-// import Pagination from "react-js-pagination";
-import { Route, withRouter } from "react-router-dom";
-import { deleteUser, getAllUsers } from "../../../actions/UserAction";
+} from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import Pagination from 'react-js-pagination';
+import { Route, withRouter } from 'react-router-dom';
+import { deleteUser, getAllUsers } from '../../../actions/UserAction';
 import {
   deleteItem,
   getAllItems,
   deleteDayItem,
   getAllDayItems
-} from "../../../actions/ItemAction";
-import { connect } from "react-redux";
-import { confirmAlert } from "react-confirm-alert";
-import "./CustomTable.css";
+} from '../../../actions/ItemAction';
+import { connect } from 'react-redux';
+import { confirmAlert } from 'react-confirm-alert';
 
 class CustomTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       currentPage: 1,
-      dataPerPage: 5,
-      search: "",
+      dataPerPage: 10,
+      search: '',
       rowData: [5, 10, 15],
-      status: "",
+      status: '',
       selectedRow: null,
       statusOptions: [
         {
-          label: "CSV",
-          value: "csv"
+          label: 'CSV',
+          value: 'csv'
         },
         {
-          label: "XLS",
-          value: "xls"
+          label: 'XLS',
+          value: 'xls'
         }
       ],
       columns: [],
@@ -62,20 +62,21 @@ class CustomTable extends Component {
   }
 
   /** Handle page count */
-  handlePageChange = (event, data) => {
+  handlePageChange = currentPage => {
     this.setState({
-      currentPage: data.activePage
+      currentPage
     });
   };
 
   /** Apply filter  */
   filterData = () => {
     const { tableData, search, status, columns } = this.state;
-    if (search !== "" && status !== "") {
+    if (search !== '' && status !== '') {
       const filteredData = tableData.filter(item => {
         for (let val of columns) {
           if (
             val.searchable === true &&
+            item[val.keyName] &&
             item[val.keyName]
               .toString()
               .toLowerCase()
@@ -87,11 +88,12 @@ class CustomTable extends Component {
         return false;
       });
       return filteredData;
-    } else if (search !== "") {
+    } else if (search !== '') {
       const filteredData = tableData.filter(item => {
         for (let val of columns) {
           if (
             val.searchable === true &&
+            item[val.keyName] &&
             item[val.keyName]
               .toString()
               .toLowerCase()
@@ -102,7 +104,7 @@ class CustomTable extends Component {
         return false;
       });
       return filteredData;
-    } else if (status !== "") {
+    } else if (status !== '') {
       const filteredData = tableData.filter(item => item.format === status);
       return filteredData;
     }
@@ -113,22 +115,22 @@ class CustomTable extends Component {
   deleteRow = (event, id) => {
     event.preventDefault();
     confirmAlert({
-      title: "Confirmation",
-      message: "Are you sure to want delete it?",
+      title: 'Confirmation',
+      message: 'Are you sure to want delete it?',
       buttons: [
         {
-          label: "Yes",
+          label: 'Yes',
           onClick: () => {
-            if (this.props.module === "USERS") {
+            if (this.props.module === 'USERS') {
               this.props.deleteUser(id, () => {
                 this.props.getAllUsers();
               });
-            } else if (this.props.module === "ITEMS") {
+            } else if (this.props.module === 'ITEMS') {
               // Delete items
               this.props.deleteItem(id, () => {
                 this.props.getAllItems();
               });
-            } else if (this.props.module === "DAYITEMS") {
+            } else if (this.props.module === 'DAYITEMS') {
               // Delete items
               this.props.deleteDayItem(id, () => {
                 this.props.getAllDayItems();
@@ -137,7 +139,7 @@ class CustomTable extends Component {
           }
         },
         {
-          label: "No"
+          label: 'No'
         }
       ]
     });
@@ -206,7 +208,7 @@ class CustomTable extends Component {
     selectedRow[keyName] = value;
     this.setState({
       selectedRow,
-      error: selectedRow[keyName] == "" ? true : false
+      error: selectedRow[keyName] == '' ? true : false
     });
   };
 
@@ -222,7 +224,7 @@ class CustomTable extends Component {
     return (
       <div>
         <select
-          className="form-control"
+          className='form-control'
           value={selectedRow[keyName]}
           onChange={event => this.updateRowValue(keyName, event.target.value)}
         >
@@ -239,12 +241,12 @@ class CustomTable extends Component {
     return (
       <div>
         <input
-          type="text"
-          className="form-control"
+          type='text'
+          className='form-control'
           value={inputValue}
           onChange={event => this.updateRowValue(keyName, event.target.value)}
         />
-        {inputValue == "" && <p className="error">The value is required</p>}
+        {inputValue == '' && <p className='error'>The value is required</p>}
       </div>
     );
   };
@@ -284,8 +286,8 @@ class CustomTable extends Component {
     if (currentTodos.length === 0) {
       return (
         <Table.Row>
-          <Table.HeaderCell colSpan="5">
-            <div className="alert alert-warning">It seems, no data found!</div>
+          <Table.HeaderCell colSpan='5'>
+            <div className='alert alert-warning'>It seems, no data found!</div>
           </Table.HeaderCell>
         </Table.Row>
       );
@@ -297,7 +299,7 @@ class CustomTable extends Component {
       return (
         <Table.Row key={`tblrow-${rowkey}`}>
           {this.state.columns.map((tableColumnName, key) => {
-            if (tableColumnName === "editDelete") {
+            if (tableColumnName === 'editDelete') {
               return null;
             }
             let value = rowData[tableColumnName.keyName];
@@ -306,12 +308,12 @@ class CustomTable extends Component {
             }
 
             const sortColumnStyle = classNames({
-              "sort-enabled": sortedColumn.keyName === tableColumnName,
-              "highlighted-search-text":
+              'sort-enabled': sortedColumn.keyName === tableColumnName,
+              'highlighted-search-text':
                 value &&
                 value.includes(this.state.search) &&
-                this.state.search === "",
-              "text-right": value && !isNaN(parseInt(value))
+                this.state.search === '',
+              'text-right': value && !isNaN(parseInt(value))
             });
             return (
               <Table.Cell key={`col-${key}`} className={sortColumnStyle}>
@@ -319,43 +321,43 @@ class CustomTable extends Component {
               </Table.Cell>
             );
           })}
-          {this.props.module !== "TRANSACTIONS" && (
-            <Table.Cell className="d-flex justify-content-center modify-row-data">
-              {this.props.module === "ITEMS" && (
+          {this.props.module !== 'TRANSACTIONS' && (
+            <Table.Cell className='d-flex justify-content-center modify-row-data'>
+              {this.props.module === 'ITEMS' && (
                 <Link
                   to={{
                     pathname: `/update-item/${rowData.id}`
                   }}
                 >
-                  <Icon name="edit" />
+                  <Icon name='edit' />
                 </Link>
               )}
-              {this.props.module === "DAYITEMS" && (
+              {this.props.module === 'DAYITEMS' && (
                 <Link
                   to={{
                     pathname: `/update-day-item/${rowData.id}`
                   }}
                 >
-                  <Icon name="edit" />
+                  <Icon name='edit' />
                 </Link>
               )}
-              {this.props.module === "USERS" && (
+              {this.props.module === 'USERS' && (
                 <Link
                   to={{
                     pathname: `/update-user/${rowData.id}`
                   }}
                 >
-                  <Icon name="edit" />
+                  <Icon name='edit' />
                 </Link>
               )}
               <a
-                className="action-icon"
-                href="#"
+                className='action-icon'
+                href='#'
                 onClick={event => {
                   this.deleteRow(event, rowData.id);
                 }}
               >
-                <Icon name="trash alternate" />
+                <Icon name='trash alternate' />
               </a>
             </Table.Cell>
           )}
@@ -390,11 +392,11 @@ class CustomTable extends Component {
     ));
 
     return (
-      <div className="form-group row">
-        <div className="col-sm-12">
-          <span className="row-per-label">Grid.Row per page</span>
+      <div className='form-group row'>
+        <div className='col-sm-12'>
+          <span className='row-per-label'>Grid.Row per page</span>
           <select
-            className="form-control-sm"
+            className='form-control-sm'
             value={dataPerPage}
             onChange={event => this.handleRowChange(event.target.value)}
           >
@@ -418,8 +420,8 @@ class CustomTable extends Component {
     let { status, statusOptions } = this.state;
     statusOptions = [...statusOptions];
     statusOptions.unshift({
-      label: "All",
-      value: ""
+      label: 'All',
+      value: ''
     });
     const rowDataOption = statusOptions.map(val => (
       <option key={val.value} value={val.value}>
@@ -428,11 +430,11 @@ class CustomTable extends Component {
     ));
 
     return (
-      <div className="form-group row">
-        <label className="col-sm-2 col-form-label">Show</label>
-        <div className="col-sm-10">
+      <div className='form-group row'>
+        <label className='col-sm-2 col-form-label'>Show</label>
+        <div className='col-sm-10'>
           <select
-            className="form-control"
+            className='form-control'
             value={status}
             onChange={event => this.handleStatusFilter(event.target.value)}
           >
@@ -482,12 +484,12 @@ class CustomTable extends Component {
   renderColumns = () => {
     const { columns } = this.state;
     return columns.map(val => {
-      let dynamicClass = "";
+      let dynamicClass = '';
       if (val.sortable) {
-        dynamicClass = "sort";
+        dynamicClass = 'sort';
         if (val.sort === true) {
-          dynamicClass = "sort down";
-        } else if (val.sort === false) dynamicClass = "sort up";
+          dynamicClass = 'sort down';
+        } else if (val.sort === false) dynamicClass = 'sort up';
       }
       return (
         <Table.HeaderCell
@@ -507,14 +509,14 @@ class CustomTable extends Component {
         <Grid.Row>
           <Grid.Column width={4}></Grid.Column>
           <Grid.Column width={4}> </Grid.Column>
-          <Grid.Column width={8} textAlign="right">
+          <Grid.Column width={8} textAlign='right'>
             <Form>
               <Form.Field inline>
                 <label>Search</label>
                 <Input
-                  placeholder="Please search here.."
-                  type="text"
-                  className="search-input"
+                  placeholder='Please search here..'
+                  type='text'
+                  className='search-input'
                   value={this.state.search}
                   onChange={event => this.handleSearchInput(event.target.value)}
                 />
@@ -528,7 +530,7 @@ class CustomTable extends Component {
               <Table.Header>
                 <Table.Row>
                   {this.renderColumns()}
-                  {this.props.module !== "TRANSACTIONS" && (
+                  {this.props.module !== 'TRANSACTIONS' && (
                     <Table.HeaderCell></Table.HeaderCell>
                   )}
                 </Table.Row>
@@ -539,23 +541,23 @@ class CustomTable extends Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={8}></Grid.Column>
-          <Grid.Column width={8} textAlign="right">
-            <Pagination
+          <Grid.Column width={8} textAlign='right'>
+            {/* <Pagination
               defaultActivePage={this.state.currentPage}
               totalPages={this.filterData().length}
               onPageChange={this.handlePageChange}
               activePage={this.state.currentPage}
               boundaryRange={5}
+            /> */}
+            <Pagination
+              activePage={this.state.currentPage}
+              itemsCountPerPage={this.state.dataPerPage}
+              totalItemsCount={this.state.tableData.length}
+              onChange={this.handlePageChange}
+              linkClass='page-link'
+              itemClass='page-item'
+              innerClass='pagination pagination-sm'
             />
-            {/* <Pagination
-                  activePage={this.state.currentPage}
-                  itemsCountPerPage={this.state.dataPerPage}
-                  totalItemsCount={this.filterData().length}
-                  onChange={this.handlePageChange}
-                  linkClass="page-link"
-                  itemClass="page-item"
-                  innerClass="pagination pagination-sm"
-                /> */}
           </Grid.Column>
         </Grid.Row>
       </Grid>
