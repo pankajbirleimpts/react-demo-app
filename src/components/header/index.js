@@ -1,31 +1,31 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link, useRouteMatch, withRouter } from 'react-router-dom';
-import { Grid, Image } from 'semantic-ui-react';
-import './header.css';
-import { signout } from '../../actions/UserAction';
+import React from "react";
+import { connect } from "react-redux";
+import { Link, useRouteMatch, withRouter } from "react-router-dom";
+import { Grid, Image } from "semantic-ui-react";
+import "./header.css";
+import { signout } from "../../actions/UserAction";
 
 function Header({ user, signout, history }) {
   const signoutToUser = () => {
     signout(() => {
-      history.push('/login');
+      history.push("/login");
     });
   };
 
-  console.log('user', user);
-
   return (
-    <Grid className='header-container'>
-      <Grid.Row className='header-name-section'>
+    <Grid className="header-container">
+      <Grid.Row className="header-name-section">
         <Grid.Column width={12}>
-          <h3>Canteen Management System</h3>
+          <h3 className="web-logo">Canteen Management System</h3>
         </Grid.Column>
         {user.isAuthenticated === true && (
           <Grid.Column width={4}>
-            <div className='user-details'>
-              {user.data.firstName} {user.data.lastName}
-              <p>({user.data.role})</p>
-              <a href='javasctipt:void(0)' onClick={() => signoutToUser()}>
+            <div className="user-details">
+              <p className="user-name">
+                {user.data.firstName} {user.data.lastName}
+              </p>
+              <p className="user-role">({user.data.role})</p>
+              <a href="javasctipt:void(0)" onClick={() => signoutToUser()}>
                 Logout
               </a>
             </div>
@@ -33,28 +33,27 @@ function Header({ user, signout, history }) {
         )}
       </Grid.Row>
 
-      <Grid.Row>
+      <Grid.Row className="menu-container">
         <Grid.Column>
-          <div className='ui secondary pointing menu'>
-            <MenuLink to='/' label='Home' />
+          <div className="ui secondary pointing menu">
             {user.isAuthenticated === true && (
               <React.Fragment>
-                <MenuLink to='/dashboard' label='Dashboard' />
-                {user.data && user.data.role && user.data.role === 'ADMIN' && (
+                <MenuLink to="/dashboard" label="Dashboard" />
+                {user.data && user.data.role && user.data.role === "ADMIN" && (
                   <React.Fragment>
-                    <MenuLink to='/users' label='Users' />
-                    <MenuLink to='/items' label='Items' />
-                    <MenuLink to='/day-items' label='Day Items' />
-                    <MenuLink to='/purchase-item' label='Purchase Item' />
+                    <MenuLink to="/users" label="Users" />
+                    <MenuLink to="/items" label="Items" />
+                    <MenuLink to="/day-items" label="Day Items" />
+                    <MenuLink to="/purchase-item" label="Purchase Item" />
                   </React.Fragment>
                 )}
-                <MenuLink to='/transactions' label='Transactions' />
+                <MenuLink to="/transactions" label="Transactions" />
               </React.Fragment>
             )}
             {user.isAuthenticated !== true && (
               <React.Fragment>
-                <MenuLink to='/login' label='Login' />
-                <MenuLink to='/signup' label='Signup' />
+                <MenuLink to="/" label="Home" />
+                <MenuLink to="/signup" label="Signup" />
               </React.Fragment>
             )}
           </div>
@@ -71,7 +70,7 @@ function MenuLink({ label, to, activeOnlyWhenExact = true }) {
   });
 
   return (
-    <Link className={match ? 'item active' : 'item'} to={to}>
+    <Link className={match ? "item active" : "item"} to={to}>
       {label}
     </Link>
   );

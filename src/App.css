@@ -1,1 +1,36 @@
-p.red{ color: red }
+body {
+  background-color: #f7f7f7;
+  margin-top: -16px !important;
+}
+.header-name-section {
+  background-color: #23d0e8;
+  color: #fff;
+  padding: 5px; 
+  min-height: 80px;
+}
+p.red {
+  color: red;
+}
+.user-details {
+  text-align: right;
+}
+.user-details p {
+  margin: 2px 0;
+  font-size: 16px;
+}
+.user-details .user-role {
+  font-size: 14px;
+}
+.user-details a {
+  color: #fff;
+}
+.user-details a:hover {
+  color: #fff;
+}
+.web-logo {
+  font-style: italic;
+  font-size: 22px;
+}
+.menu-container{
+    padding-top: 0 !important;
+}

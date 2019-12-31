@@ -297,6 +297,7 @@ class CustomTable extends Component {
       //   ViewLabel.charAt(0).toUpperCase() + ViewLabel.slice(1).toLowerCase();
       // const previousRoutePath = "/".concat(viewLabelText.toLowerCase());
       return (
+        
         <Table.Row key={`tblrow-${rowkey}`}>
           {this.state.columns.map((tableColumnName, key) => {
             if (tableColumnName === 'editDelete') {

@@ -26,7 +26,7 @@ class Signin extends Component {
     console.log("formSubmitHandler ", values);
     this.props.signin(values, () => {
       let { from } = this.props.location.state || { from: { pathname: "/" } };
-      this.props.history.replace(from);
+      this.props.history.replace("/dashboard");
     });
   };
 
@@ -58,7 +58,12 @@ class Signin extends Component {
         </div>
         <div className="field">
           <div class="ui fitted toggle checkbox">
-            <Field name="loginasadmin" type="checkbox" readonly="" tabindex="0" />
+            <Field
+              name="loginasadmin"
+              type="checkbox"
+              readonly=""
+              tabindex="0"
+            />
             <label></label>
           </div>
         </div>
@@ -75,7 +80,7 @@ class Signin extends Component {
         <Loader isLoading={this.props.user.isLoading} />
         <Grid.Row centered>
           <Grid.Column width="8">
-            <h2>Signup</h2>
+            <h2>Signin</h2>
             <Formik
               initialValues={{
                 email: "",

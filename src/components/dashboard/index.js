@@ -1,23 +1,37 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Grid, Table } from 'semantic-ui-react';
-import { getAllDayItems } from '../../actions/ItemAction';
-import moment from 'moment';
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { Grid, Table } from "semantic-ui-react";
+import { getAllDayItems, getAllTransactions } from "../../actions/ItemAction";
+import moment from "moment";
 
 class Dashboard extends Component {
   componentDidMount() {
-    const today = moment().format('DD-MMM-YYYY');
+    const today = moment().format("DD-MMM-YYYY");
     this.props.getAllDayItems(today);
+    this.props.getAllTransactions();
+  }
+
+  calculateTotalIncome() {
+    const { allTransactions } = this.props.item;
+    const totalIncome = allTransactions.reduce((total, val) => {
+      console.log("total, val", total, val.purchaseAmount, val);
+      const purchaseAmount = parseFloat(val.purchaseAmount);
+      console.log("purchaseAmount", typeof purchaseAmount, purchaseAmount);
+      total = total + purchaseAmount;
+    }, 0);
+
+    console.log("totalIncome", totalIncome);
   }
 
   renderDayItemRow = () => {
     const { allDayItems } = this.props.item;
     if (allDayItems.length === 0) {
       return (
-        <Table.Row colspan='3'>
-          <Table.Cell>Cell</Table.Cell>
-          No day items are added yet!
+        <Table.Row>
+          <Table.Cell colSpan="3">
+            <center>No day items are added yet!</center>
+          </Table.Cell>
         </Table.Row>
       );
     }
@@ -40,12 +54,18 @@ class Dashboard extends Component {
         <Grid>
           <Grid.Row>
             <Grid.Column width={8}>
-              <p>Balance</p>
-              <p>Rs. {userData.balance}</p>
+              <div>
+                <h4>Balance</h4>
+                <p>Rs. {userData.balance}</p>
+              </div>
+              <div>
+                <h4>Total Income</h4>
+                <p>Rs. {this.calculateTotalIncome()}</p>
+              </div>
             </Grid.Column>
             <Grid.Column width={8}>
-              <p>Today Items</p>
-              <Table attached='top' basic verticalAlign='top'>
+              <h4>Today Items</h4>
+              <Table attached="top" basic verticalAlign="top">
                 <Table.Header>
                   <Table.HeaderCell>Item Name</Table.HeaderCell>
                   <Table.HeaderCell>Category</Table.HeaderCell>
@@ -62,13 +82,13 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps({ user, item }) {
-  console.log('item ', item);
+  console.log("item ", item);
   return {
     user,
     item
   };
 }
 
-export default connect(mapStateToProps, { getAllDayItems })(
+export default connect(mapStateToProps, { getAllDayItems, getAllTransactions })(
   withRouter(Dashboard)
 );

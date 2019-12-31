@@ -49,7 +49,7 @@ function Routing(props) {
           <div className='ui segment'>
             <Switch>
               <Route exact path='/'>
-                <Home />
+                <Login />
               </Route>
               <Route path='/about'>
                 <About />
