@@ -286,7 +286,7 @@ class CustomTable extends Component {
     if (currentTodos.length === 0) {
       return (
         <Table.Row>
-          <Table.HeaderCell colSpan='5'>
+          <Table.HeaderCell colSpan={(columns.length + 1)}>
             <div className='alert alert-warning'>It seems, no data found!</div>
           </Table.HeaderCell>
         </Table.Row>

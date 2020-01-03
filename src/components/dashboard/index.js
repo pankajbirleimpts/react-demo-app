@@ -1,27 +1,25 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { Grid, Table } from "semantic-ui-react";
-import { getAllDayItems, getAllTransactions } from "../../actions/ItemAction";
-import moment from "moment";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Grid, Table } from 'semantic-ui-react';
+import moment from 'moment';
+import { getAllDayItems, getAllTransactions } from '../../actions/ItemAction';
 
 class Dashboard extends Component {
   componentDidMount() {
-    const today = moment().format("DD-MMM-YYYY");
+    const today = moment().format('DD-MMM-YYYY');
     this.props.getAllDayItems(today);
     this.props.getAllTransactions();
   }
 
   calculateTotalIncome() {
-    const { allTransactions } = this.props.item;
-    const totalIncome = allTransactions.reduce((total, val) => {
-      console.log("total, val", total, val.purchaseAmount, val);
+    const { item } = this.props;
+    const totalIncome = item.allTransactions.reduce((total, val) => {
       const purchaseAmount = parseFloat(val.purchaseAmount);
-      console.log("purchaseAmount", typeof purchaseAmount, purchaseAmount);
-      total = total + purchaseAmount;
+      total += purchaseAmount;
+      return total;
     }, 0);
-
-    console.log("totalIncome", totalIncome);
+    return totalIncome;
   }
 
   renderDayItemRow = () => {
@@ -35,15 +33,16 @@ class Dashboard extends Component {
         </Table.Row>
       );
     }
-    return allDayItems.map(val => {
-      return (
-        <Table.Row>
-          <Table.Cell>{val.itemName}</Table.Cell>
-          <Table.Cell>{val.category}</Table.Cell>
-          <Table.Cell>Rs. {val.amount}</Table.Cell>
-        </Table.Row>
-      );
-    });
+    return allDayItems.map((val) => (
+      <Table.Row>
+        <Table.Cell>{val.itemName}</Table.Cell>
+        <Table.Cell>{val.category}</Table.Cell>
+        <Table.Cell>
+          Rs.
+          {val.amount}
+        </Table.Cell>
+      </Table.Row>
+    ));
   };
 
   render() {
@@ -54,14 +53,28 @@ class Dashboard extends Component {
         <Grid>
           <Grid.Row>
             <Grid.Column width={8}>
-              <div>
-                <h4>Balance</h4>
-                <p>Rs. {userData.balance}</p>
-              </div>
-              <div>
-                <h4>Total Income</h4>
-                <p>Rs. {this.calculateTotalIncome()}</p>
-              </div>
+              {
+                userData.role === "ADMIN" ?
+                  (
+                    <div>
+                      <h4>Total Income</h4>
+                      <p>
+                        Rs.{' '}
+                        {this.calculateTotalIncome()}
+                      </p>
+                    </div>
+                  )
+                  :
+                  (
+                    <div>
+                      <h4>Balance</h4>
+                      <p>
+                        Rs.{' '}
+                        {userData.balance}
+                      </p>
+                    </div>
+                  )
+              }
             </Grid.Column>
             <Grid.Column width={8}>
               <h4>Today Items</h4>
@@ -82,13 +95,12 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps({ user, item }) {
-  console.log("item ", item);
   return {
     user,
-    item
+    item,
   };
 }
 
 export default connect(mapStateToProps, { getAllDayItems, getAllTransactions })(
-  withRouter(Dashboard)
+  withRouter(Dashboard),
 );

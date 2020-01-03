@@ -34,3 +34,9 @@ p.red {
 .menu-container{
     padding-top: 0 !important;
 }
+.routing-container{
+  min-height: 550px;
+}
+.alert-warning{
+  text-align: center;
+}

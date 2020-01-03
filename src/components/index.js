@@ -46,7 +46,7 @@ function Routing(props) {
       <languageContext.Provider>
         <Router>
           <Header />
-          <div className='ui segment'>
+          <div className='ui segment routing-container'>
             <Switch>
               <Route exact path='/'>
                 <Login />
