@@ -1,6 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch, Redirect, Route } from "react-router-dom";
+import { toast } from 'react-toastify';
+import { langs } from '../config';
 
 /**
  * method firebaseResponseTransform
@@ -8,7 +10,6 @@ import { Link, useRouteMatch } from "react-router-dom";
  * @param {*} response
  */
 export function firebaseResponseTransform(response) {
-  console.log("response", response, typeof response);
   const result = [];
   if (response) {
     Object.keys(response).forEach(key => {
@@ -19,7 +20,6 @@ export function firebaseResponseTransform(response) {
 }
 
 function MenuLinkfn({ label, to, activeOnlyWhenExact = true, user }) {
-  console.log("user MenuLink", user);
   let match = useRouteMatch({
     path: to,
     exact: activeOnlyWhenExact
@@ -39,3 +39,36 @@ const mapStateToProps = state => ({
 const MenuLink = connect(mapStateToProps, null)(MenuLinkfn);
 
 export { MenuLink };
+
+
+
+// screen if you're not yet authenticated.
+const AuthRouteFn = ({ children, permission, user, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        (user.isAuthenticated && permission === undefined) ||
+          (user.isAuthenticated &&
+            permission !== undefined &&
+            permission === user.data.role) ? (
+            children
+          ) : (
+            <React.Fragment>
+              {toast.warn(langs.messages.PERMISSION_MSG)}
+              <Redirect
+                to={{
+                  pathname: '/login',
+                  state: { from: location }
+                }}
+              />
+            </React.Fragment>
+          )
+      }
+    />
+  );
+};
+
+export const AuthRoute = connect(({ user }) => {
+  return { user };
+}, null)(AuthRouteFn);

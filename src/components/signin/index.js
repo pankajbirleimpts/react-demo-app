@@ -15,18 +15,23 @@ import { signin, signout } from '../../actions/UserAction';
 import { langs } from '../../config';
 import { Loader } from '../common';
 
-class Signin extends Component {
+export class UnConnectedSignin extends Component {
+  constructor(props) {
+    super(props);
+  }
   componentDidMount() {
-    const isAuthenticated = reactLocalStorage.get('isAuthenticated');
+    const { isAuthenticated } = this.props.user;
     if (isAuthenticated) {
       const { history } = this.props;
       history.replace('/dashboard');
     }
   }
 
-  formSubmitHandler = (values) => {
-    this.props.signin(values, () => {
-      this.props.history.replace('/dashboard');
+  formSubmitHandler(values) {
+    const { signin, history } = this.props;
+    signin(values, () => {
+      console.log(" this.props ", this.props);
+      history.replace('/dashboard');
     });
   };
 
@@ -46,19 +51,20 @@ class Signin extends Component {
     <Form noValidate className='ui form'>
       <div className='field'>
         <label>Email</label>
-        <Field name='email' type='email' />
+        <Field data-test="email-input" name='email' type='email' />
         <ErrorMessage component='p' name='email' className='red' />
       </div>
       <div className='field'>
         <label>Password</label>
-        <Field name='password' type='password' />
+        <Field data-test="password-input" name='password' type='password' />
         <ErrorMessage component='p' name='password' className='red' />
       </div>
       <div className='field'>
         <div className='ui fitted toggle checkbox'>
-          <Field name='loginasadmin' type='checkbox' readonly='' tabindex='0' />
+          <Field name='loginasadmin' type='checkbox' />
           <label />
         </div>
+        <span className="label-login-as-admin">Login as Admin</span>
       </div>
       <button className='ui button primary' type='submit'>
         Signin
@@ -99,4 +105,4 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(mapStateToProp, { signin, signout })(withRouter(Signin));
+export default connect(mapStateToProp, { signin, signout })(UnConnectedSignin);

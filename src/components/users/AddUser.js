@@ -173,7 +173,7 @@ class AddUser extends Component {
 
 function mapStateToProp({ user }) {
   return {
-    user
+    user   
   };
 }
 

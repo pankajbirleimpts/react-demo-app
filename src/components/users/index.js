@@ -68,8 +68,6 @@ class UserList extends Component {
           <Grid.Column width={8} textAlign="left"><h3>Manage Users</h3></Grid.Column>
           <Grid.Column width={8} textAlign="right"><Link to="/add-user" className="ui button primary">+ Add User</Link></Grid.Column>
         </Grid.Row>
-
-
         <Grid.Row centered>
           <CustomTable
             columns={this.state.columns}

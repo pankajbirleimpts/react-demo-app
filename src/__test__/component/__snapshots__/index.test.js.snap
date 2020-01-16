@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tested the Routing Snapshot of Routing component 1`] = `
+<Container>
+  <Connect(withRouter(Header)) />
+  <div
+    className="ui segment routing-container"
+  >
+    <Switch>
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(UnConnectedSignin)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(UnConnectedSignin)",
+            "type": [Function],
+          }
+        }
+        path="/login"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(Signup))",
+            "type": [Function],
+          }
+        }
+        path="/signup"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(Dashboard))",
+            "type": [Function],
+          }
+        }
+        path="/dashboard"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(UserList))",
+            "type": [Function],
+          }
+        }
+        path="/users"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(AddUser))",
+            "type": [Function],
+          }
+        }
+        path="/add-user"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(AddUser))",
+            "type": [Function],
+          }
+        }
+        path="/update-user/:id"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(AddItem))",
+            "type": [Function],
+          }
+        }
+        path="/add-item"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(AddItem))",
+            "type": [Function],
+          }
+        }
+        path="/update-item/:id"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(ItemList))",
+            "type": [Function],
+          }
+        }
+        path="/items"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(DayItem))",
+            "type": [Function],
+          }
+        }
+        path="/add-day-item"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(DayItem))",
+            "type": [Function],
+          }
+        }
+        path="/update-day-item/:id"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(DayItemList))",
+            "type": [Function],
+          }
+        }
+        path="/day-items"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(PurchaseItem))",
+            "type": [Function],
+          }
+        }
+        path="/purchase-item"
+        permission="ADMIN"
+      />
+      <Connect(AuthRouteFn)
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(withRouter(TransactionList))",
+            "type": [Function],
+          }
+        }
+        path="/transactions"
+      />
+      <Route
+        component={[Function]}
+        path="*"
+      />
+    </Switch>
+  </div>
+</Container>
+`;

@@ -41,7 +41,6 @@ export function getAllUsers() {
     axios
       .get(`${BASE_URL}/users.json`, header)
       .then(response => {
-        console.log("signin response ", response.data);
         const usersData = firebaseResponseTransform(response.data);
         const allUsers = usersData.filter(user => user.role === "EMPLOYEE");
         dispatch({
@@ -65,12 +64,10 @@ export function signin(user, callback) {
     dispatch({
       type: USER_API_REQUEST
     });
-    axios
+    return axios
       .get(`${BASE_URL}/users.json`, header)
       .then(response => {
-        console.log("signin response ", response.data);
         const usersData = firebaseResponseTransform(response.data);
-        console.log("userData", usersData);
         let loggedUser = false;
         if (user.loginasadmin) {
           loggedUser = usersData.find(
@@ -98,7 +95,6 @@ export function signin(user, callback) {
         }
       })
       .catch(error => {
-        console.log("signup error");
         dispatch({
           type: USER_API_FAIL
         });
@@ -123,10 +119,9 @@ export function signup(data, callback, addUser = false) {
     dispatch({
       type: USER_API_REQUEST
     });
-    axios
+    return axios
       .post(`${BASE_URL}/users.json`, data, header)
-      .then(response => {
-        console.log("signup response ", response);
+      .then(response => {       
         dispatch({
           type: SIGNUP
         });
@@ -137,8 +132,7 @@ export function signup(data, callback, addUser = false) {
         }
         callback();
       })
-      .catch(error => {
-        console.log("signup error");
+      .catch(error => {      
         dispatch({
           type: USER_API_FAIL
         });
@@ -154,10 +148,9 @@ export function updateUser(userId, data, callback) {
     dispatch({
       type: USER_API_REQUEST
     });
-    axios
+   return axios
       .put(`${BASE_URL}/users/${userId}.json`, data, header)
       .then(response => {
-        console.log("signup response ", response);
         dispatch({
           type: SIGNUP
         });
@@ -165,7 +158,6 @@ export function updateUser(userId, data, callback) {
         callback();
       })
       .catch(error => {
-        console.log("signup error");
         dispatch({
           type: USER_API_FAIL
         });
@@ -180,7 +172,7 @@ export function deleteUser(userId, callback) {
     dispatch({
       type: USER_API_REQUEST
     });
-    axios
+   return axios
       .delete(`${BASE_URL}/users/${userId}.json`, header)
       .then(response => {
         callback();
@@ -201,17 +193,15 @@ export function getUser(userId, callback) {
     dispatch({
       type: USER_API_REQUEST
     });
-    axios
+   return axios
       .get(`${BASE_URL}/users/${userId}.json`, header)
       .then(response => {
-        console.log("signup response ", response);
         dispatch({
           type: SIGNUP
         });
         callback(response.data);
       })
       .catch(error => {
-        console.log("signup error");
         dispatch({
           type: USER_API_FAIL
         });

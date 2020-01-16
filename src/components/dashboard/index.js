@@ -80,9 +80,11 @@ class Dashboard extends Component {
               <h4>Today Items</h4>
               <Table attached="top" basic verticalAlign="top">
                 <Table.Header>
-                  <Table.HeaderCell>Item Name</Table.HeaderCell>
-                  <Table.HeaderCell>Category</Table.HeaderCell>
-                  <Table.HeaderCell>Price</Table.HeaderCell>
+                  <Table.Row>
+                    <Table.HeaderCell>Item Name</Table.HeaderCell>
+                    <Table.HeaderCell>Category</Table.HeaderCell>
+                    <Table.HeaderCell>Price</Table.HeaderCell>
+                  </Table.Row>
                 </Table.Header>
                 <Table.Body>{this.renderDayItemRow()}</Table.Body>
               </Table>

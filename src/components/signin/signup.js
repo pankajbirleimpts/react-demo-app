@@ -76,7 +76,7 @@ class Signup extends Component {
    * @renderForm
    * @desc: rednder form
    */
-  renderForm = ({ values, setFieldValue }) => {
+  renderForm = ({ values, onChange, setFieldValue }) => {
     return (
       <Form noValidate className="ui form">
         <div className="field">

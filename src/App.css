@@ -2,41 +2,64 @@ body {
   background-color: #f7f7f7;
   margin-top: -16px !important;
 }
+
 .header-name-section {
   background-color: #23d0e8;
   color: #fff;
-  padding: 5px; 
+  padding: 5px;
   min-height: 80px;
 }
+
 p.red {
   color: red;
 }
+
 .user-details {
   text-align: right;
 }
+
 .user-details p {
   margin: 2px 0;
   font-size: 16px;
 }
+
 .user-details .user-role {
   font-size: 14px;
 }
+
 .user-details a {
   color: #fff;
 }
+
 .user-details a:hover {
   color: #fff;
 }
+
 .web-logo {
   font-style: italic;
   font-size: 22px;
 }
-.menu-container{
-    padding-top: 0 !important;
+
+.menu-container {
+  padding-top: 0 !important;
 }
-.routing-container{
+
+.routing-container {
   min-height: 550px;
 }
-.alert-warning{
+
+.alert-warning {
   text-align: center;
+}
+
+.label-login-as-admin {
+  margin-left: 13px;
+  color: rgba(0, 0, 0, .87);
+  font-size: .92857143em;
+  font-weight: 700;
+  text-transform: none;
+  text-align: center;
+  display: block;
+  float: right;
+  margin-right: 72%;;
 }

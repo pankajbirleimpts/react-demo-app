@@ -1,21 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
-  Route,
-  Redirect
+  Route
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { reactLocalStorage } from 'reactjs-localstorage';
 import 'semantic-ui-css/semantic.min.css';
-import { toast } from 'react-toastify';
+
 import { Container } from 'semantic-ui-react';
 
 import { updateUserStore } from '../actions/UserAction';
 
 import Header from './header';
 import Login from './signin';
-import Home from './home';
 import Dashboard from './dashboard';
 import About from './about';
 import NoPage from './common/NoPage';
@@ -28,119 +25,55 @@ import DayItem from './items/DayItem';
 import DayItemList from './items/DayItemList';
 import PurchaseItem from './items/PurchaseItem';
 import TransactionList from './items/TransactionList';
-import { langs } from '../config';
+import { AuthRoute } from '../utils';
 
-import languageContext from '../context/language';
+export class UnConnectedRouting extends Component {
 
-function Routing(props) {
+  constructor(props) {
+    super(props);
+  }
+
   /** Check the localstorage have information of logged user */
-  (function() {
+  componentDidMount() {
     const loggedUser = reactLocalStorage.get('loggedUser');
-    if (loggedUser && props.user.isAuthenticated === false) {
-      props.updateUserStore(JSON.parse(loggedUser));
+    if (loggedUser && this.props.user.isAuthenticated === false) {
+      this.props.updateUserStore(JSON.parse(loggedUser));
     }
-  })();
+  }
 
-  return (
-    <Container>
-      <languageContext.Provider>
-        <Router>
-          <Header />
-          <div className='ui segment routing-container'>
-            <Switch>
-              <Route exact path='/'>
-                <Login />
-              </Route>
-              <Route path='/about'>
-                <About />
-              </Route>
-              <Route path='/login'>
-                <Login />
-              </Route>
-              <Route path='/signup'>
-                <Sigup />
-              </Route>
-              <AuthRoute path='/dashboard'>
-                <Dashboard />
-              </AuthRoute>
-              <AuthRoute path='/users' permission='ADMIN'>
-                <UserList />
-              </AuthRoute>
-              <AuthRoute path='/add-user' permission='ADMIN'>
-                <AddUser />
-              </AuthRoute>
-              <AuthRoute path='/update-user/:id' permission='ADMIN'>
-                <AddUser />
-              </AuthRoute>
-              <AuthRoute path='/add-item' permission='ADMIN'>
-                <AddItem />
-              </AuthRoute>
-              <AuthRoute path='/update-item/:id' permission='ADMIN'>
-                <AddItem />
-              </AuthRoute>
-              <AuthRoute path='/items' permission='ADMIN'>
-                <ItemList />
-              </AuthRoute>
-              <AuthRoute path='/add-day-item' permission='ADMIN'>
-                <DayItem />
-              </AuthRoute>
-              <AuthRoute path='/update-day-item/:id' permission='ADMIN'>
-                <DayItem />
-              </AuthRoute>
-              <AuthRoute path='/day-items' permission='ADMIN'>
-                <DayItemList />
-              </AuthRoute>
-              <AuthRoute path='/purchase-item' permission='ADMIN'>
-                <PurchaseItem />
-              </AuthRoute>
-              <AuthRoute path='/transactions'>
-                <TransactionList />
-              </AuthRoute>
-              <Route path='*'>
-                <NoPage />
-              </Route>
-            </Switch>
-          </div>
-        </Router>
-      </languageContext.Provider>
-    </Container>
-  );
+  render() {
+    return (
+      <Container>
+        <Header />
+        <div className='ui segment routing-container'>
+          <Switch>
+            <Route exact path='/' component={Login} />
+            <Route path='/login' component={Login} />
+            <Route path='/signup' component={Sigup} />
+            <AuthRoute path='/dashboard' component={Dashboard} />
+            <AuthRoute path='/users' permission='ADMIN' component={UserList} />
+            <AuthRoute path='/add-user' permission='ADMIN' component={AddUser} />
+            <AuthRoute path='/update-user/:id' permission='ADMIN' component={AddUser} />
+            <AuthRoute path='/add-item' permission='ADMIN' component={AddItem} />
+            <AuthRoute path='/update-item/:id' permission='ADMIN' component={AddItem} />
+            <AuthRoute path='/items' permission='ADMIN' component={ItemList} />
+            <AuthRoute path='/add-day-item' permission='ADMIN' component={DayItem} />
+            <AuthRoute path='/update-day-item/:id' permission='ADMIN' component={DayItem} />
+            <AuthRoute path='/day-items' permission='ADMIN' component={DayItemList} />
+            <AuthRoute path='/purchase-item' permission='ADMIN' component={PurchaseItem} />
+            <AuthRoute path='/transactions' component={TransactionList} />
+            <Route path='*' component={NoPage} />
+          </Switch >
+        </div>
+      </Container >
+    );
+  }
 }
+
 
 const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps, { updateUserStore })(Routing);
+export default connect(mapStateToProps, { updateUserStore })(UnConnectedRouting);
 
-// screen if you're not yet authenticated.
-const AuthRouteFn = ({ children, permission, user, ...rest }) => {
-  console.log('AuthRouteFn user ', user);
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        (user.isAuthenticated && permission === undefined) ||
-        (user.isAuthenticated &&
-          permission !== undefined &&
-          permission === user.data.role) ? (
-          children
-        ) : (
-          <React.Fragment>
-            {toast.warn(langs.messages.PERMISSION_MSG)}
-            <Redirect
-              to={{
-                pathname: '/login',
-                state: { from: location }
-              }}
-            />
-          </React.Fragment>
-        )
-      }
-    />
-  );
-};
-
-const AuthRoute = connect(({ user }) => {
-  return { user };
-}, null)(AuthRouteFn);
