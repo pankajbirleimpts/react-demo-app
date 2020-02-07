@@ -3,9 +3,6 @@ import { shallow, mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import Signin, { UnConnectedSignin } from '../../../components/signin/index';
 import { storeFactory, findByAttr } from '../../test/TestUtils';
-import { array } from 'yup';
-
-
 
 const setup = (props) => {
   const store = storeFactory(props);

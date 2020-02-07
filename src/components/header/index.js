@@ -5,7 +5,7 @@ import { Grid, Image } from "semantic-ui-react";
 import "./header.css";
 import { signout } from "../../actions/UserAction";
 
-function Header({ user, signout, history }) {
+export function Header({ user, signout, history }) {
   const signoutToUser = () => {
     signout(() => {
       history.push("/login");
@@ -19,13 +19,13 @@ function Header({ user, signout, history }) {
           <h3 className="web-logo">Canteen Management System</h3>
         </Grid.Column>
         {user.isAuthenticated === true && (
-          <Grid.Column width={4}>
+          <Grid.Column width={4} data-test="user-details-section">
             <div className="user-details">
               <p className="user-name">
                 {user.data.firstName} {user.data.lastName}
               </p>
               <p className="user-role">({user.data.role})</p>
-              <a href="javasctipt:void(0)" onClick={() => signoutToUser()}>
+              <a href="javasctipt:void(0)" data-test="logout-action" onClick={() => signoutToUser()}>
                 Logout
               </a>
             </div>
@@ -37,11 +37,11 @@ function Header({ user, signout, history }) {
         <Grid.Column>
           <div className="ui secondary pointing menu">
             {user.isAuthenticated === true && (
-              <React.Fragment>
+              <React.Fragment key="user-menu">
                 <MenuLink to="/dashboard" label="Dashboard" />
                 {user.data && user.data.role && user.data.role === "ADMIN" && (
-                  <React.Fragment>
-                    <MenuLink to="/users" label="Users" />
+                  <React.Fragment key="admin-nav">
+                    <MenuLink data-test="admin-navigation" to="/users" label="Users" />
                     <MenuLink to="/items" label="Items" />
                     <MenuLink to="/day-items" label="Day Items" />
                     <MenuLink to="/purchase-item" label="Purchase Item" />
@@ -51,9 +51,9 @@ function Header({ user, signout, history }) {
               </React.Fragment>
             )}
             {user.isAuthenticated !== true && (
-              <React.Fragment>
-                <MenuLink to="/" label="Home" />
-                <MenuLink to="/signup" label="Signup" />
+              <React.Fragment >
+                <MenuLink  to="/" label="Home" />
+                <MenuLink data-test="sign-navigation" to="/signup" label="Signup" />
               </React.Fragment>
             )}
           </div>

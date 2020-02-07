@@ -46,7 +46,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const userData = this.props.user.data;
+    const userData = this.props.user.data; 
     return (
       <div>
         <h2>Dashboard</h2>
@@ -103,6 +103,4 @@ function mapStateToProps({ user, item }) {
   };
 }
 
-export default connect(mapStateToProps, { getAllDayItems, getAllTransactions })(
-  withRouter(Dashboard),
-);
+export default connect(mapStateToProps, { getAllDayItems, getAllTransactions })(Dashboard);

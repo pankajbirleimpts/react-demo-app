@@ -1,19 +1,15 @@
 import React, { Component } from 'react';
 import './CustomTable.css';
 import {
-  Header,
   Table,
   Icon,
   Grid,
-  // Pagination,
   Form,
   Input,
-  Confirm
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import Pagination from 'react-js-pagination';
-import { Route, withRouter } from 'react-router-dom';
 import { deleteUser, getAllUsers } from '../../../actions/UserAction';
 import {
   deleteItem,
@@ -24,7 +20,7 @@ import {
 import { connect } from 'react-redux';
 import { confirmAlert } from 'react-confirm-alert';
 
-class CustomTable extends Component {
+export class UnconnectedCustomTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,41 +67,23 @@ class CustomTable extends Component {
   /** Apply filter  */
   filterData = () => {
     const { tableData, search, status, columns } = this.state;
-    if (search !== '' && status !== '') {
+    if (search !== '') {
       const filteredData = tableData.filter(item => {
+        let result = false;
         for (let val of columns) {
           if (
-            val.searchable === true &&
+            val.searchable === true && result === false &&
             item[val.keyName] &&
             item[val.keyName]
               .toString()
               .toLowerCase()
-              .indexOf(search.toLowerCase()) >= 0 &&
-            item.format === status
-          )
-            return true;
+              .indexOf(search.toString().toLowerCase()) >= 0
+          ) {
+            result = true;
+          }
         }
-        return false;
+        return result;
       });
-      return filteredData;
-    } else if (search !== '') {
-      const filteredData = tableData.filter(item => {
-        for (let val of columns) {
-          if (
-            val.searchable === true &&
-            item[val.keyName] &&
-            item[val.keyName]
-              .toString()
-              .toLowerCase()
-              .indexOf(search.toLowerCase()) >= 0
-          )
-            return true;
-        }
-        return false;
-      });
-      return filteredData;
-    } else if (status !== '') {
-      const filteredData = tableData.filter(item => item.format === status);
       return filteredData;
     }
     return tableData;
@@ -260,7 +238,7 @@ class CustomTable extends Component {
     /* Sorting data */
     const sortedColumn = columns.find(val => val.sort !== null);
     if (sortedColumn.sort === true) {
-      filterData = filterData.sort(function(a, b) {
+      filterData = filterData.sort(function (a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return -1;
         }
@@ -270,7 +248,7 @@ class CustomTable extends Component {
         return 0;
       });
     } else if (sortedColumn.sort === false) {
-      filterData = filterData.sort(function(a, b) {
+      filterData = filterData.sort(function (a, b) {
         if (a[sortedColumn.keyName] < b[sortedColumn.keyName]) {
           return 1;
         }
@@ -285,7 +263,7 @@ class CustomTable extends Component {
 
     if (currentTodos.length === 0) {
       return (
-        <Table.Row>
+        <Table.Row data-test="table-no-record-message">
           <Table.HeaderCell colSpan={(columns.length + 1)}>
             <div className='alert alert-warning'>It seems, no data found!</div>
           </Table.HeaderCell>
@@ -293,12 +271,9 @@ class CustomTable extends Component {
       );
     }
     return currentTodos.map((rowData, rowkey) => {
-      // const viewLabelText =
-      //   ViewLabel.charAt(0).toUpperCase() + ViewLabel.slice(1).toLowerCase();
-      // const previousRoutePath = "/".concat(viewLabelText.toLowerCase());
       return (
-        
-        <Table.Row key={`tblrow-${rowkey}`}>
+
+        <Table.Row key={`tblrow-${rowkey}`} data-test="table-row">
           {this.state.columns.map((tableColumnName, key) => {
             if (tableColumnName === 'editDelete') {
               return null;
@@ -352,6 +327,7 @@ class CustomTable extends Component {
                 </Link>
               )}
               <a
+                data-test="delete-row-action"
                 className='action-icon'
                 href='#'
                 onClick={event => {
@@ -369,81 +345,11 @@ class CustomTable extends Component {
 
   /** Update search input */
   handleSearchInput = value => {
+    console.log("value ", value);
     this.setState({
       search: value,
       currentPage: 1
     });
-  };
-
-  /** update data per page count */
-  handleRowChange = value => {
-    this.setState({
-      dataPerPage: value,
-      currentPage: 1
-    });
-  };
-
-  /** Grid.Row per change input */
-  renderRowPerPage = () => {
-    const { rowData, dataPerPage } = this.state;
-    const rowDataOption = rowData.map(val => (
-      <option key={val} value={val}>
-        {val}
-      </option>
-    ));
-
-    return (
-      <div className='form-group row'>
-        <div className='col-sm-12'>
-          <span className='row-per-label'>Grid.Row per page</span>
-          <select
-            className='form-control-sm'
-            value={dataPerPage}
-            onChange={event => this.handleRowChange(event.target.value)}
-          >
-            {rowDataOption}
-          </select>
-        </div>
-      </div>
-    );
-  };
-
-  /** Handle status filter */
-  handleStatusFilter = value => {
-    this.setState({
-      status: value,
-      currentPage: 1
-    });
-  };
-
-  /** Grid.Row per change input */
-  renderStatusFilter = () => {
-    let { status, statusOptions } = this.state;
-    statusOptions = [...statusOptions];
-    statusOptions.unshift({
-      label: 'All',
-      value: ''
-    });
-    const rowDataOption = statusOptions.map(val => (
-      <option key={val.value} value={val.value}>
-        {val.label}
-      </option>
-    ));
-
-    return (
-      <div className='form-group row'>
-        <label className='col-sm-2 col-form-label'>Show</label>
-        <div className='col-sm-10'>
-          <select
-            className='form-control'
-            value={status}
-            onChange={event => this.handleStatusFilter(event.target.value)}
-          >
-            {rowDataOption}
-          </select>
-        </div>
-      </div>
-    );
   };
 
   /** Handle sorting event */
@@ -494,6 +400,8 @@ class CustomTable extends Component {
       }
       return (
         <Table.HeaderCell
+          data-test="column-heading"
+          data-test="column-heading"
           key={`key${val.keyName}`}
           onClick={() => this.handleSorting(val.keyName, val.sortable)}
         >
@@ -506,7 +414,7 @@ class CustomTable extends Component {
 
   render() {
     return (
-      <Grid>
+      <Grid data-test="table-container">
         <Grid.Row>
           <Grid.Column width={4}></Grid.Column>
           <Grid.Column width={4}> </Grid.Column>
@@ -519,6 +427,7 @@ class CustomTable extends Component {
                   type='text'
                   className='search-input'
                   value={this.state.search}
+                  data-test="search-input"
                   onChange={event => this.handleSearchInput(event.target.value)}
                 />
               </Form.Field>
@@ -543,13 +452,6 @@ class CustomTable extends Component {
         <Grid.Row>
           <Grid.Column width={8}></Grid.Column>
           <Grid.Column width={8} textAlign='right'>
-            {/* <Pagination
-              defaultActivePage={this.state.currentPage}
-              totalPages={this.filterData().length}
-              onPageChange={this.handlePageChange}
-              activePage={this.state.currentPage}
-              boundaryRange={5}
-            /> */}
             <Pagination
               activePage={this.state.currentPage}
               itemsCountPerPage={this.state.dataPerPage}
@@ -566,7 +468,7 @@ class CustomTable extends Component {
   }
 }
 
-const mapStateToProps = state => {};
+const mapStateToProps = state => { };
 
 export default connect(mapStateToProps, {
   deleteUser,
@@ -575,4 +477,4 @@ export default connect(mapStateToProps, {
   getAllItems,
   deleteDayItem,
   getAllDayItems
-})(withRouter(CustomTable));
+})(UnconnectedCustomTable);

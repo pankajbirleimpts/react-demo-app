@@ -38,7 +38,7 @@ exports[`Tested the Routing Snapshot of Routing component 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(withRouter(Signup))",
+            "displayName": "Connect(UnConnectedSignup)",
             "type": [Function],
           }
         }
@@ -50,7 +50,7 @@ exports[`Tested the Routing Snapshot of Routing component 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(withRouter(Dashboard))",
+            "displayName": "Connect(Dashboard)",
             "type": [Function],
           }
         }

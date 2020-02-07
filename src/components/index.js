@@ -14,7 +14,6 @@ import { updateUserStore } from '../actions/UserAction';
 import Header from './header';
 import Login from './signin';
 import Dashboard from './dashboard';
-import About from './about';
 import NoPage from './common/NoPage';
 import Sigup from './signin/signup';
 import UserList from './users/index';

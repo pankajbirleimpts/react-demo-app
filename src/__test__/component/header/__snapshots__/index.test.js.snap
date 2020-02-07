@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`If a user is login with admin Snapshot of Header component 1`] = `
+<Grid
+  className="header-container"
+>
+  <GridRow
+    className="header-name-section"
+  >
+    <GridColumn
+      width={12}
+    >
+      <h3
+        className="web-logo"
+      >
+        Canteen Management System
+      </h3>
+    </GridColumn>
+    <GridColumn
+      data-test="user-details-section"
+      width={4}
+    >
+      <div
+        className="user-details"
+      >
+        <p
+          className="user-name"
+        >
+          Admin
+           
+          User
+        </p>
+        <p
+          className="user-role"
+        >
+          (
+          ADMIN
+          )
+        </p>
+        <a
+          data-test="logout-action"
+          href="javasctipt:void(0)"
+          onClick={[Function]}
+        >
+          Logout
+        </a>
+      </div>
+    </GridColumn>
+  </GridRow>
+  <GridRow
+    className="menu-container"
+  >
+    <GridColumn>
+      <div
+        className="ui secondary pointing menu"
+      >
+        <MenuLink
+          label="Dashboard"
+          to="/dashboard"
+        />
+        <MenuLink
+          data-test="admin-navigation"
+          label="Users"
+          to="/users"
+        />
+        <MenuLink
+          label="Items"
+          to="/items"
+        />
+        <MenuLink
+          label="Day Items"
+          to="/day-items"
+        />
+        <MenuLink
+          label="Purchase Item"
+          to="/purchase-item"
+        />
+        <MenuLink
+          label="Transactions"
+          to="/transactions"
+        />
+      </div>
+    </GridColumn>
+  </GridRow>
+</Grid>
+`;

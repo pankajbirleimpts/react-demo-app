@@ -60,7 +60,6 @@ class UserList extends Component {
   formSubmitHandler = values => { };
 
   render() {
-    console.log("this.props.user ", this.props.user);
     return (
       <Grid>
         <Loader isLoading={this.props.user.isLoading} />
@@ -86,4 +85,4 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(mapStateToProp, { getAllUsers })(withRouter(UserList));
+export default connect(mapStateToProp, { getAllUsers })(UserList);

@@ -24,12 +24,10 @@ function equalTo(ref, msg) {
 }
 Yup.addMethod(Yup.string, "equalTo", equalTo);
 
-class Signup extends Component {
+export class UnConnectedSignup extends Component {
   
   componentDidMount() {
-    const isAuthenticated = reactLocalStorage.get("isAuthenticated");
-    console.log("isAuthenticated ", isAuthenticated, typeof isAuthenticated);
-    if (isAuthenticated) {
+    if (this.props.user.isAuthenticated) {
       this.props.history.replace("/dashboard");
     }
   }
@@ -81,37 +79,37 @@ class Signup extends Component {
       <Form noValidate className="ui form">
         <div className="field">
           <label>First Name</label>
-          <Field name="firstName" type="text" />
+          <Field data-test="firstName-input" name="firstName" type="text" />
           <ErrorMessage component="p" name="firstName" className="red" />
         </div>
         <div className="field">
           <label>Last Name</label>
-          <Field name="lastName" type="text" />
+          <Field data-test="lastName-input" name="lastName" type="text" />
           <ErrorMessage component="p" name="lastName" className="red" />
         </div>
         <div className="field">
           <label>Employee ID</label>
-          <Field name="employeeId" type="text" />
+          <Field data-test="employeedId-input" name="employeeId" type="text" />
           <ErrorMessage component="p" name="employeeId" className="red" />
         </div>
         <div className="field">
           <label>Email</label>
-          <Field name="email" type="email" />
+          <Field data-test="email-input" name="email" type="email" />
           <ErrorMessage component="p" name="email" className="red" />
         </div>
         <div className="field">
           <label>Password</label>
-          <Field name="password" type="password" />
+          <Field data-test="password-input" name="password" type="password" />
           <ErrorMessage component="p" name="password" className="red" />
         </div>
         <div className="field">
           <label>Confirm Password</label>
-          <Field name="confirmPassword" type="password" />
+          <Field data-test="confirmPassword-input" name="confirmPassword" type="password" />
           <ErrorMessage component="p" name="confirmPassword" className="red" />
         </div>
         <div className="field">
           <label>Location</label>
-          <Field name="country" as="select">
+          <Field data-test="country-input" name="country" as="select">
             <option value="">Select Location</option>
             <option value="Indore">Indore</option>
             <option value="Indore">Noida</option>
@@ -164,5 +162,5 @@ function mapStateToProp({ user }) {
 }
 
 export default connect(mapStateToProp, { signin, signout, signup })(
-  withRouter(Signup)
+  UnConnectedSignup
 );
