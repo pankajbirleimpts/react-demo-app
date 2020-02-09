@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ItemList component Snapshot of ItemList component 1`] = `
+<Grid>
+  <Loading
+    isLoading={false}
+  />
+  <GridRow>
+    <GridColumn
+      textAlign="left"
+      width={8}
+    >
+      <h3>
+        Manage Items
+      </h3>
+    </GridColumn>
+    <GridColumn
+      textAlign="right"
+      width={8}
+    >
+      <Link
+        className="ui button primary"
+        to="/add-item"
+      >
+        + Add item
+      </Link>
+    </GridColumn>
+  </GridRow>
+  <GridRow
+    centered={true}
+  >
+    <Connect(UnconnectedCustomTable)
+      columns={
+        Array [
+          Object {
+            "keyName": "itemName",
+            "label": "Item Name",
+            "searchable": true,
+            "sort": true,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "category",
+            "label": "Category",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "isActive",
+            "label": "Status",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "amount",
+            "label": "Amount",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "description",
+            "label": "Description",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+        ]
+      }
+      module="ITEMS"
+      tableData={
+        Array [
+          Object {
+            "amount": 15,
+            "category": "Roti",
+            "description": "This is tawa rohi",
+            "id": 1,
+            "isActive": "Active",
+            "itemName": "Tawa Roti",
+          },
+          Object {
+            "amount": 15,
+            "category": "Dal",
+            "description": "Tal tadka",
+            "isActive": "Active",
+            "itemName": "Dal tadka",
+          },
+        ]
+      }
+    />
+  </GridRow>
+</Grid>
+`;

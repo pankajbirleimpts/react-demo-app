@@ -62,7 +62,7 @@ exports[`Tested the Routing Snapshot of Routing component 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(withRouter(UserList))",
+            "displayName": "Connect(UnconnectedUserList)",
             "type": [Function],
           }
         }
@@ -127,7 +127,7 @@ exports[`Tested the Routing Snapshot of Routing component 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(withRouter(ItemList))",
+            "displayName": "Connect(ItemList)",
             "type": [Function],
           }
         }

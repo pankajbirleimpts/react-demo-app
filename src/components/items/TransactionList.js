@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Grid, Checkbox } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { getAllTransactions } from '../../actions/ItemAction';
-import { langs } from '../../config';
 import { Loader, CustomTable } from '../common';
 
 class TransactionList extends Component {
@@ -70,10 +68,8 @@ class TransactionList extends Component {
     this.props.getAllTransactions(userId);
   }
 
-  formSubmitHandler = values => {};
 
   render() {
-    console.log('this.props.item ', this.props.item);
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
@@ -97,5 +93,5 @@ function mapStateToProp({ item, user }) {
 }
 
 export default connect(mapStateToProp, { getAllTransactions })(
-  withRouter(TransactionList)
+  TransactionList
 );

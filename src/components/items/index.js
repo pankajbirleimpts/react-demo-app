@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { Grid, Checkbox } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import { getAllItems } from "../../actions/ItemAction";
-import { langs } from "../../config";
 import { Loader, CustomTable } from "../common";
 
 class ItemList extends Component {
@@ -54,10 +53,7 @@ class ItemList extends Component {
     this.props.getAllItems();
   }
 
-  formSubmitHandler = values => { };
-
   render() {
-    console.log("this.props.item ", this.props.item);
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
@@ -85,4 +81,4 @@ function mapStateToProp({ item }) {
   };
 }
 
-export default connect(mapStateToProp, { getAllItems })(withRouter(ItemList));
+export default connect(mapStateToProp, { getAllItems })(ItemList);

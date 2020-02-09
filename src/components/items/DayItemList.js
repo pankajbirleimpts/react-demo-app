@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { withRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Grid, Checkbox } from "semantic-ui-react";
 import { getAllDayItems } from "../../actions/ItemAction";
-import { langs } from "../../config";
 import { Loader, CustomTable } from "../common";
 
 class DayItemList extends Component {
@@ -61,10 +60,8 @@ class DayItemList extends Component {
     this.props.getAllDayItems();
   }
 
-  formSubmitHandler = values => { };
-
+  
   render() {
-    console.log("this.props.item ", this.props.item);
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
@@ -72,8 +69,6 @@ class DayItemList extends Component {
           <Grid.Column width={8} textAlign="left"><h3>Manage Day Items</h3></Grid.Column>
           <Grid.Column width={8} textAlign="right"><Link to="/add-day-item" className="ui button primary">+ Add Day item</Link></Grid.Column>
         </Grid.Row>
-
-
         <Grid.Row centered>
           <CustomTable
             columns={this.state.columns}
@@ -92,4 +87,4 @@ function mapStateToProp({ item }) {
   };
 }
 
-export default connect(mapStateToProp, { getAllDayItems })(withRouter(DayItemList));
+export default connect(mapStateToProp, { getAllDayItems })(DayItemList);

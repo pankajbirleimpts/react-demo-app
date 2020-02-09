@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TransactionList component Snapshot of TransactionList component 1`] = `
+<Grid>
+  <Loading
+    isLoading={false}
+  />
+  <GridRow
+    centered={true}
+  >
+    <Connect(UnconnectedCustomTable)
+      columns={
+        Array [
+          Object {
+            "keyName": "userName",
+            "label": "User Name",
+            "searchable": true,
+            "sort": true,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "itemName",
+            "label": "Item name",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "category",
+            "label": "Category",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "date",
+            "label": "Date",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "amount",
+            "label": "Rate",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "quantity",
+            "label": "Quantity",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "purchaseAmount",
+            "label": "Total Amount",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+        ]
+      }
+      module="TRANSACTIONS"
+      tableData={
+        Array [
+          Object {
+            "amount": 15,
+            "category": "Roti",
+            "date": "26-Dec-2019",
+            "id": "-Lx18EC9oMqwARQ2HL5m",
+            "itemId": "-Lwi9T6G70Fs-Wd5JF0r",
+            "itemName": "Tawa Roti",
+            "purchaseAmount": "0.00",
+            "quantity": 0,
+            "userId": "-Lwc-iXIVHhQnEihsqcW",
+            "userName": "Harish Nararayan",
+          },
+          Object {
+            "amount": 15,
+            "category": "Roti",
+            "date": "26-Dec-2019",
+            "id": "-Lx18EC9oMqwARQ2HL5n",
+            "itemId": "-Lwi9T6G70Fs-Wd5JF0r",
+            "itemName": "Tawa Roti",
+            "purchaseAmount": "10.00",
+            "quantity": 1,
+            "userId": "-Lwc-iXIVHhQnEihsqcs",
+            "userName": "Harish Nararayan",
+          },
+        ]
+      }
+    />
+  </GridRow>
+</Grid>
+`;

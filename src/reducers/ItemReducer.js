@@ -14,7 +14,7 @@ const initialState = {
 };
 
 export default function ItemsReducer(state = initialState, action) {
-  switch (action.type) {
+  switch (action && action.type) {
     case ALLITEMS:
       return {
         ...state,

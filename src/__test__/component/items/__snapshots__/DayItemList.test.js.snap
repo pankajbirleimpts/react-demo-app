@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DayItemList component Snapshot of DayItemList component 1`] = `
+<Grid>
+  <Loading
+    isLoading={false}
+  />
+  <GridRow>
+    <GridColumn
+      textAlign="left"
+      width={8}
+    >
+      <h3>
+        Manage Day Items
+      </h3>
+    </GridColumn>
+    <GridColumn
+      textAlign="right"
+      width={8}
+    >
+      <Link
+        className="ui button primary"
+        to="/add-day-item"
+      >
+        + Add Day item
+      </Link>
+    </GridColumn>
+  </GridRow>
+  <GridRow
+    centered={true}
+  >
+    <Connect(UnconnectedCustomTable)
+      columns={
+        Array [
+          Object {
+            "keyName": "itemName",
+            "label": "Item Name",
+            "searchable": true,
+            "sort": true,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "category",
+            "label": "Category",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "date",
+            "label": "Date",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "amount",
+            "label": "Amount",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "totalQuantity",
+            "label": "Total Quantity",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+          Object {
+            "keyName": "remainingQuantity",
+            "label": "Sell Out Quantity",
+            "searchable": true,
+            "sort": null,
+            "sortable": true,
+          },
+        ]
+      }
+      module="DAYITEMS"
+      tableData={
+        Array [
+          Object {
+            "amount": 10,
+            "category": "Dal",
+            "date": "27-Dec-2019",
+            "id": 1,
+            "itemName": "Dal tadka",
+            "remainingQuantity": 0,
+            "totalQuantity": 100,
+          },
+          Object {
+            "amount": 20,
+            "category": "Dal",
+            "date": "27-Dec-2019",
+            "id": 2,
+            "itemName": "Sev Tamatar",
+            "remainingQuantity": 0,
+            "totalQuantity": 100,
+          },
+        ]
+      }
+    />
+  </GridRow>
+</Grid>
+`;

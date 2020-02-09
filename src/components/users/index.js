@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import { withRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { reactLocalStorage } from "reactjs-localstorage";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { Grid, Checkbox } from "semantic-ui-react";
 import { getAllUsers } from "../../actions/UserAction";
-import { langs } from "../../config";
 import { Loader, CustomTable } from "../common";
 
-class UserList extends Component {
+export class UnconnectedUserList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,8 +53,6 @@ class UserList extends Component {
     this.props.getAllUsers();
   }
 
-  formSubmitHandler = values => { };
-
   render() {
     return (
       <Grid>
@@ -85,4 +79,4 @@ function mapStateToProp({ user }) {
   };
 }
 
-export default connect(mapStateToProp, { getAllUsers })(UserList);
+export default connect(mapStateToProp, { getAllUsers })(UnconnectedUserList);
