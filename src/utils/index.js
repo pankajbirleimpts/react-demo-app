@@ -19,7 +19,7 @@ export function firebaseResponseTransform(response) {
   return result;
 }
 
-function MenuLinkfn({ label, to, activeOnlyWhenExact = true, user }) {
+export function MenuLink({ label, to, activeOnlyWhenExact = true }) {
   let match = useRouteMatch({
     path: to,
     exact: activeOnlyWhenExact
@@ -32,30 +32,23 @@ function MenuLinkfn({ label, to, activeOnlyWhenExact = true, user }) {
   );
 }
 
-const mapStateToProps = state => ({
-  user: state.user
-});
-
-const MenuLink = connect(mapStateToProps, null)(MenuLinkfn);
-
-export { MenuLink };
 
 
 
 // screen if you're not yet authenticated.
-const AuthRouteFn = ({ children, permission, user, ...rest }) => {
+const AuthRouteFn = ({ component: Component, permission, user, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={({ location }) =>
+      render={({ location, props, history, match }) =>
         (user.isAuthenticated && permission === undefined) ||
           (user.isAuthenticated &&
             permission !== undefined &&
             permission === user.data.role) ? (
-            children
+            <Component {...props} history={history} match={match} />
           ) : (
             <React.Fragment>
-              {toast.warn(langs.messages.PERMISSION_MSG)}
+              {toast.warning(langs.messages.PERMISSION_MSG)}
               <Redirect
                 to={{
                   pathname: '/login',

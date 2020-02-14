@@ -9,7 +9,7 @@ import { getUser, signup, updateUser } from '../../actions/UserAction';
 import { langs } from '../../config';
 import { Loader } from '../common';
 
-class AddUser extends Component {
+export class UnconnectedAddUser extends Component {
   state = {
     id: '',
     initialValues: {
@@ -40,12 +40,12 @@ class AddUser extends Component {
    * @desc: Submit the signup form
    */
   formSubmitHandler = values => {
-    delete values.confirmPassword;
+    const { id } = this.props.match.params;
     values.role = 'EMPLOYEE';
-    if (this.state.id !== '') {
+    if (id) {
       // Update user
       this.props.updateUser(
-        this.state.id,
+       id,
         values,
         () => {
           this.props.history.replace('/users');
@@ -69,6 +69,7 @@ class AddUser extends Component {
    * @desc: form validation
    */
   formValidation = () => {
+    const { id } = this.props.match.params;
     return Yup.object().shape({
       firstName: Yup.string()
         .max(25, langs.messages.CHAR_MAX_LIMIT_25)
@@ -78,8 +79,8 @@ class AddUser extends Component {
         .required(langs.messages.REQUIRED),
       employeeId: Yup.string().required(langs.messages.REQUIRED),
       password: Yup.string()
-        .min(8, langs.messages.CHAR_MIN_LIMIT_8)
-        .required(langs.messages.REQUIRED),
+        .min(8, langs.messages.CHAR_MIN_LIMIT_8),
+        //.required(langs.messages.REQUIRED),
       balance: Yup.number().required(langs.messages.REQUIRED),
       email: Yup.string()
         .email(langs.messages.INVALID_EMAIL)
@@ -93,43 +94,44 @@ class AddUser extends Component {
    * @desc: rednder form
    */
   renderForm = ({ values, setFieldValue }) => {
+    const { id } = this.props.match.params;
     return (
       <Form noValidate className='ui form'>
         <div className='field'>
           <label>First Name</label>
-          <Field name='firstName' type='text' />
+          <Field data-test="firstName-input" name='firstName' type='text' />
           <ErrorMessage component='p' name='firstName' className='red' />
         </div>
         <div className='field'>
           <label>Last Name</label>
-          <Field name='lastName' type='text' />
+          <Field data-test="lastName-input" name='lastName' type='text' />
           <ErrorMessage component='p' name='lastName' className='red' />
         </div>
         <div className='field'>
           <label>Employee ID</label>
-          <Field name='employeeId' type='text' />
+          <Field data-test="employeeId-input" name='employeeId' type='text' />
           <ErrorMessage component='p' name='employeeId' className='red' />
         </div>
         <div className='field'>
           <label>Email</label>
-          <Field name='email' type='email' />
+          <Field data-test="email-input" name='email' type='email' />
           <ErrorMessage component='p' name='email' className='red' />
         </div>
         <div className='field'>
           <label>Balance</label>
-          <Field name='balance' type='number' />
+          <Field data-test="balance-input" name='balance' type='number' />
           <ErrorMessage component='p' name='balance' className='red' />
         </div>
-        {this.state.id === '' && (
+        {!id && (
           <div className='field'>
             <label>Password</label>
-            <Field name='password' type='password' />
+            <Field data-test="password-input" name='password' type='password' />
             <ErrorMessage component='p' name='password' className='red' />
           </div>
         )}
         <div className='field'>
           <label>Location</label>
-          <Field name='country' as='select'>
+          <Field data-test="country-input" name='country' as='select'>
             <option value=''>Select Location</option>
             <option value='Indore'>Indore</option>
             <option value='Indore'>Noida</option>
@@ -140,7 +142,7 @@ class AddUser extends Component {
         <Link to='/users' className='ui button'>
           Back to Users List
         </Link>
-        <button className='ui button primary' type='submit'>
+        <button className='ui button primary' type='submit' data-text="button-title">
           {this.state.id !== '' ? 'Update' : 'Submit'}
         </button>
       </Form>
@@ -153,7 +155,7 @@ class AddUser extends Component {
         <Loader isLoading={this.props.user.isLoading} />
         <Grid.Row centered>
           <Grid.Column width='8'>
-            <h2> {this.state.id !== '' ? 'Update' : 'Add'} User</h2>
+            <h2 data-test="page-heading">{this.state.id !== '' ? 'Update' : 'Add'} User</h2>
             <Formik
               enableReinitialize
               initialValues={this.state.initialValues}
@@ -178,5 +180,5 @@ function mapStateToProp({ user }) {
 }
 
 export default connect(mapStateToProp, { getUser, signup, updateUser })(
-  withRouter(AddUser)
+  UnconnectedAddUser
 );

@@ -17,15 +17,15 @@ const setup = (props) => {
 };
 
 describe('Signup component', () => {
-    //   test('Snapshot of Signup component', () => {
-    //     const props = {
-    //       user: {
-    //         isAuthenticated: false,
-    //       },
-    //     };
-    //     const wrapper = setup(props);
-    //     expect(wrapper).toMatchSnapshot();
-    //   });
+      test('Snapshot of Signup component', () => {
+        const props = {
+          user: {
+            isAuthenticated: false,
+          },
+        };
+        const wrapper = setup(props);
+        expect(wrapper).toMatchSnapshot();
+      });
 
 
     test('Check the isAuthenticated in props', () => {
