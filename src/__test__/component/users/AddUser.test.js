@@ -31,15 +31,10 @@ describe('Add user Flow', () => {
             }
         }
     }
-    //   test('Snapshot of AddUser component', () => {
-    //     const props = {
-    //       user: {
-    //         isAuthenticated: false,
-    //       },
-    //     };
-    //     const wrapper = setup(props);
-    //     expect(wrapper).toMatchSnapshot();
-    //   });
+      test('Snapshot of AddUser component', () => {
+       const wrapper = setup(props);
+        expect(wrapper).toMatchSnapshot();
+      });
 
 
     test('Check the isLoading in props', () => {

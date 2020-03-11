@@ -17,7 +17,7 @@ import { langs } from '../../config';
 import { Loader } from '../common';
 import './dayitem.css';
 
-class PurchaseItem extends Component {
+export class UnconnectedPurchaseItem extends Component {
   state = {
     id: '',
     otherTransaction: false,
@@ -179,7 +179,7 @@ class PurchaseItem extends Component {
       <Form noValidate className='ui form'>
         <div className='field'>
           <label>User *</label>
-          <Field name='userId' as='select'>
+          <Field name='userId' as='select' data-test="userId-input">
             <option value=''>Please Select</option>
             {this.props.user.allUsers
               .filter(val => val.role === 'EMPLOYEE')
@@ -200,7 +200,7 @@ class PurchaseItem extends Component {
         </div>
         <div className='field'>
           <label>Item *</label>
-          <Field name='itemId' as='select'>
+          <Field name='itemId' as='select' data-test="itemId-input">
             <option value=''>Please Select</option>
             {this.props.item.allDayItems.map(val => {
               return (
@@ -220,21 +220,19 @@ class PurchaseItem extends Component {
         </div>
         <div className='field'>
           <label>Quantity *</label>
-          <Field name='quantity' type='number' />
+          <Field name='quantity' type='number' data-test="quantity-input"/>
           <ErrorMessage component='p' name='quantity' className='red' />
           {this.getTotalAmount(values.itemId, values.quantity) > 0 && (
             <div className='show-total-amount'>
               Total: Rs. {this.getTotalAmount(values.itemId, values.quantity)}
             </div>
           )}
-        </div>
-        <Link to='/transactions' className='ui button'>
-          Transactions
-        </Link>
+        </div>        
         <button className='ui button primary' type='submit'>
           Submit
         </button>
         <button
+          data-test="other-transation-button"
           className='ui button primary'
           type='submit'
           onClick={() => {
@@ -253,7 +251,7 @@ class PurchaseItem extends Component {
         <Loader isLoading={this.props.item.isLoading} />
         <Grid.Row centered className='add-day-item-container'>
           <Grid.Column width='8'>
-            <h2> {this.state.id !== '' ? 'Update' : 'Add'} Day Item</h2>
+            <h2 data-test="page-heading">Purchase Item</h2>
             <Formik
               enableReinitialize
               initialValues={this.state.initialValues}
@@ -272,7 +270,6 @@ class PurchaseItem extends Component {
 }
 
 function mapStateToProp({ item, user }) {
-  console.log('mapStateToProp item ', item);
   return {
     item,
     user
@@ -285,4 +282,4 @@ export default connect(mapStateToProp, {
   getAllItems,
   getAllUsers,
   getAllDayItems
-})(withRouter(PurchaseItem));
+})(UnconnectedPurchaseItem);

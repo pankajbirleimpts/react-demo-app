@@ -49,20 +49,23 @@ describe('Signin component', () => {
   });
 
   test('Checking redirect to dashboard if user is loggedin ', () => {
-    const historyMock = { replace: jest.fn() };
+    const historyMock = { push: jest.fn() };
     const props = {
       user: {
         isAuthenticated: true,
       },
       history: historyMock,
+      location: {
+        state : '/',
+      }
     };
     const wrapper = shallow(<UnConnectedSignin {...props} />);
-    expect(historyMock.replace).toHaveBeenCalled();
+    expect(historyMock.push).toHaveBeenCalled();
   });
   
   test('Checking the form values ', async () => {
     const spyFormSubmitHandler = jest.spyOn(UnConnectedSignin.prototype, 'formSubmitHandler');
-    const historyMock = { replace: jest.fn() };
+    const historyMock = { push: jest.fn() };
     const singinMock = jest.fn();
     const props = {
       user: {

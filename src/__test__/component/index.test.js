@@ -87,7 +87,7 @@ describe('Tested the Routing', () => {
         };
         const wrapper = shallow(<UnConnectedRouting {...props} />);
         // Run life cylce method
-        wrapper.instance().componentDidMount();
+        wrapper.instance();
         const loggedUser = reactLocalStorage.get('loggedUser');
         const componentProps = wrapper.instance().props;
         if (loggedUser && componentProps.user.isAuthenticated === false) {

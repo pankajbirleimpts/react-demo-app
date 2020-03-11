@@ -4,8 +4,11 @@ import { connect } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Grid } from "semantic-ui-react";
-import SemanticDatepicker from "react-semantic-ui-datepickers";
+/* import SemanticDatepicker from "react-semantic-ui-datepickers";
 import "react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css";
+import DatePicker from 'react-date-picker'; */
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import {
   getAllItems,
@@ -16,7 +19,7 @@ import {
 import { langs } from "../../config";
 import { Loader } from "../common";
 import "./dayitem.css";
-class DayItem extends Component {
+export class UnconnectedDayItem extends Component {
   state = {
     id: "",
     initialValues: {
@@ -33,7 +36,7 @@ class DayItem extends Component {
     const { id } = this.props.match.params;
     if (id) {
       this.props.getDayItem(id, response => {
-        response.date = moment(response.date, "DD-MMM-YYYY").toDate();
+        response.date = moment(response.date).toDate();
         this.setState({
           initialValues: response,
           id
@@ -46,11 +49,14 @@ class DayItem extends Component {
    * @desc: Submit the signup form
    */
   formSubmitHandler = values => {
+    // debugger;
+    const { date } = values;
     values.itemDetails = this.props.item.allItems.find(
       val => val.id === values.itemId
     );
-    values.date = moment(values.date).format("DD-MMM-YYYY");
-    if (this.state.id !== "") {
+    values.itemDate = moment(date).format("DD-MMM-YYYY");
+    const { id } = this.props.match.params;
+    if (id) {
       // Update item
       this.props.updateDayItem(
         this.state.id,
@@ -85,24 +91,32 @@ class DayItem extends Component {
    * @desc: rednder form
    */
   renderForm = ({ values, setFieldValue }) => {
-    console.log("values ", values);
     return (
       <Form noValidate className="ui form">
         <div className="field">
           <label>Date *</label>
-          <SemanticDatepicker
-            format="DD-MMM-YYYY"
-            name="date"
-            value={values.date}
-            onChange={(e, { name, value }) => {
-              setFieldValue("date", value);
-            }}
-          />
+          <Field name="date">
+            {({
+              field, // { name, value, onChange, onBlur }
+              form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+              meta,
+            }) => (
+                <DatePicker
+                  data-test="date-input"
+                  dateFormat="dd/MMM/yyyy"
+                  selected={values.date}
+                  onChange={(date) => {
+                    //   setFieldValue("date", moment(date, "DD-MMM-YYYY").toDate());
+                    setFieldValue("date", date);
+                  }}
+                />
+              )}
+          </Field>
           <ErrorMessage component="p" name="date" className="red" />
         </div>
         <div className="field">
           <label>Item *</label>
-          <Field name="itemId" as="select">
+          <Field data-test="itemId-input" name="itemId" as="select">
             <option value="">Please Select</option>
             {this.props.item.allItems.map(val => {
               return (
@@ -116,7 +130,7 @@ class DayItem extends Component {
         </div>
         <div className="field">
           <label>Quantity *</label>
-          <Field name="totalQuantity" type="number" />
+          <Field data-test="totalQuantity-input" name="totalQuantity" type="number" />
           <ErrorMessage component="p" name="totalQuantity" className="red" />
         </div>
         <Link to="/day-items" className="ui button">
@@ -130,12 +144,13 @@ class DayItem extends Component {
   };
 
   render() {
+    const { id } = this.props.match.params;
     return (
       <Grid>
         <Loader isLoading={this.props.item.isLoading} />
         <Grid.Row centered className="add-day-item-container">
           <Grid.Column width="8">
-            <h2> {this.state.id !== "" ? "Update" : "Add"} Day Item</h2>
+            <h2 data-test="page-heading">{id ? "Update" : "Add"} Day Item</h2>
             <Formik
               enableReinitialize
               initialValues={this.state.initialValues}
@@ -164,4 +179,4 @@ export default connect(mapStateToProp, {
   updateDayItem,
   getDayItem,
   getAllItems
-})(withRouter(DayItem));
+})(UnconnectedDayItem);

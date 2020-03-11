@@ -11,6 +11,7 @@
     "node-sass": "^4.13.0",
     "react": "^16.12.0",
     "react-confirm-alert": "^2.4.1",
+    "react-datepicker": "^2.12.1",
     "react-dom": "^16.12.0",
     "react-js-pagination": "^3.0.2",
     "react-localization": "^1.0.15",
@@ -23,8 +24,6 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "sass-loader": "7.2.0",
-    "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^0.88.1",
     "yup": "^0.27.0"
   },
   "scripts": {
@@ -68,9 +67,11 @@
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
-      "!<rootDir>/src/registerServiceWorker.js",
+      "!<rootDir>/src/serviceWorker.js",
       "!<rootDir>/src/index.js",
-      "!<rootDir>/src/redux/store.js",
+      "!<rootDir>/src/reducers/RootReducer.js",
+      "!<rootDir>/src/components/common/index.js",
+      "!<rootDir>/src/__test__/test/TestUtils.js",
       "!<rootDir>/node_modules/"
     ],
     "coverageThreshold": {

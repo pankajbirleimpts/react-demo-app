@@ -138,7 +138,7 @@ export function getAllDayItems(date = '') {
     dispatch({
       type: ITEM_API_REQUEST
     });
-    const params = date !== '' ? `?orderBy="date"&equalTo="${date}"` : '';
+    const params = date !== '' ? `?orderBy="itemDate"&equalTo="${date}"` : '';
     return axios
       .get(`${BASE_URL}/dayItems.json${params}`, header)
       .then(response => {

@@ -1,0 +1,89 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard with Admin and daily item Snapshot of Dashboard component 1`] = `
+<div>
+  <h2>
+    Dashboard
+  </h2>
+  <Grid>
+    <GridRow>
+      <GridColumn
+        width={8}
+      >
+        <div
+          data-test="total-income"
+        >
+          <h4>
+            Total Income
+          </h4>
+          <p>
+            Rs.
+             
+            10
+          </p>
+        </div>
+      </GridColumn>
+      <GridColumn
+        width={8}
+      >
+        <h4>
+          Today Items
+        </h4>
+        <Table
+          as="table"
+          attached="top"
+          basic={true}
+          verticalAlign="top"
+        >
+          <TableHeader
+            as="thead"
+          >
+            <TableRow
+              as="tr"
+              cellAs="td"
+            >
+              <TableHeaderCell
+                as="th"
+              >
+                Item Name
+              </TableHeaderCell>
+              <TableHeaderCell
+                as="th"
+              >
+                Category
+              </TableHeaderCell>
+              <TableHeaderCell
+                as="th"
+              >
+                Price
+              </TableHeaderCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody
+            as="tbody"
+          >
+            <TableRow
+              as="tr"
+              cellAs="td"
+            >
+              <TableCell
+                as="td"
+              >
+                Pahe
+              </TableCell>
+              <TableCell
+                as="td"
+              />
+              <TableCell
+                as="td"
+              >
+                Rs.
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </GridColumn>
+    </GridRow>
+  </Grid>
+</div>
+`;

@@ -8,10 +8,10 @@ const langs = new LocalizedStrings({
   sp: spanish
 });
 
-let currentLang = reactLocalStorage.get("defaultLanguage");
-if (typeof currentLang == "undefined") {
-  currentLang = "en";
-}
+//let currentLang = reactLocalStorage.get("defaultLanguage");
+//if (typeof currentLang == "undefined") {
+ const currentLang = "en";
+//}
 langs.setLanguage(currentLang);
 
 export default langs;

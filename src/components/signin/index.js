@@ -20,18 +20,24 @@ export class UnConnectedSignin extends Component {
     super(props);
   }
   componentDidMount() {
-    const { isAuthenticated } = this.props.user;
-    if (isAuthenticated) {
+    const { user, history, location } = this.props;
+    if (user.isAuthenticated) {
       const { history } = this.props;
-      history.replace('/dashboard');
+      const { from } = location.state || { from: { pathname: '/dashboard' } }
+      history.push(from);
     }
+    // const { user, history, location } = this.props;
+    // if (user.isAuthenticated) {
+    //   const { from } = location.state || { from: { pathname: ROUTE_TO.DEFAULT } };
+    //   history.push(from);
+    // }
   }
 
   formSubmitHandler(values) {
     const { signin, history } = this.props;
     signin(values, () => {
       console.log(" this.props ", this.props);
-      history.replace('/dashboard');
+      history.push('/dashboard');
     });
   };
 

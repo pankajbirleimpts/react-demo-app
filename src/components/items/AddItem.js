@@ -11,7 +11,7 @@ import { langs, itemCategories } from '../../config';
 import { Loader } from '../common';
 
 
-class AddItem extends Component {
+export class UnconnectedAddItem extends Component {
   state = {
     id: '',
     initialValues: {
@@ -27,7 +27,6 @@ class AddItem extends Component {
     const { id } = this.props.match.params;
     if (id) {
       this.props.getItem(id, (response) => {
-        console.log('response', response);
         this.setState({
           initialValues: response,
           id,
@@ -41,10 +40,10 @@ class AddItem extends Component {
    * @desc: Submit the signup form
    */
   formSubmitHandler = (values) => {
-    delete values.confirmPassword;
-    if (this.state.id !== '') {
+    const { id } = this.props.match.params;
+    if (id) {
       // Update item
-      this.props.updateItem(this.state.id, values, () => {
+      this.props.updateItem(id, values, () => {
         this.props.history.replace('/items');
       }, true);
     } else {
@@ -79,80 +78,77 @@ class AddItem extends Component {
    * @desc: rednder form
    */
   renderForm = ({ values, setFieldValue }) => {
-  const itemOptions = itemCategories.map(val => <option value={val.value}>{val.label}</option>);
-   return(
-     <Form noValidate className = "ui form" >
-      <div className="field">
-        <label>Item Name *</label>
-        <Field name="itemName" type="text" />
-        <ErrorMessage component="p" name="itemName" className="red" />
-      </div>
-      <div className="field">
-        <label>Category *</label>
-        <Field name="category" as="select">
-          <option value="">Please Select</option>
-          {itemOptions}
-
-
-        </Field>
-        <ErrorMessage component="p" name="category" className="red" />
-      </div>
-      <div className="field">
-        <label>Amount *</label>
-        <Field name="amount" type="number" />
-        <ErrorMessage component="p" name="amount" className="red" />
-      </div>
-      <div className="field">
-        <label>Description *</label>
-        <Field name="description" as="textarea" />
-        <ErrorMessage component="p" name="description" className="red" />
-      </div>
-      <div className="field">
-        <label>Status *</label>
-        <Field name="isActive" as="select">
-          <option value="">Please Select</option>
-          <option value="Active">Active</option>
-          <option value="Deactivev">Deactive</option>
-        </Field>
-        <ErrorMessage component="p" name="isActive" className="red" />
-      </div>
-      <Link to="/items" className="ui button">
-        Back to Items List
+    const itemOptions = itemCategories.map(val => <option value={val.value}>{val.label}</option>);
+    return (
+      <Form noValidate className="ui form" >
+        <div className="field">
+          <label>Item Name *</label>
+          <Field data-test="itemName-input" name="itemName" type="text" />
+          <ErrorMessage component="p" name="itemName" className="red" />
+        </div>
+        <div className="field">
+          <label>Category *</label>
+          <Field data-test="category-input" name="category" as="select">
+            <option value="">Please Select</option>
+            {itemOptions}
+          </Field>
+          <ErrorMessage component="p" name="category" className="red" />
+        </div>
+        <div className="field">
+          <label>Amount *</label>
+          <Field data-test="amount-input" name="amount" type="number" />
+          <ErrorMessage component="p" name="amount" className="red" />
+        </div>
+        <div className="field">
+          <label>Description *</label>
+          <Field data-test="description-input" name="description" as="textarea" />
+          <ErrorMessage component="p" name="description" className="red" />
+        </div>
+        <div className="field">
+          <label>Status *</label>
+          <Field data-test="isActive-input" name="isActive" as="select">
+            <option value="">Please Select</option>
+            <option value="Active">Active</option>
+            <option value="Deactivev">Deactive</option>
+          </Field>
+          <ErrorMessage component="p" name="isActive" className="red" />
+        </div>
+        <Link to="/items" className="ui button">
+          Back to Items List
       </Link>
-      <button className="ui button primary" type="submit">
-        {this.state.id !== '' ? 'Update' : 'Submit'}
-      </button>
-    </Form>
+        <button className="ui button primary" type="submit">
+          {this.state.id !== '' ? 'Update' : 'Submit'}
+        </button>
+      </Form>
     );
-   }
+  }
 
-render() {
-  return (
-    <Grid>
-      <Loader isLoading={this.props.item.isLoading} />
-      <Grid.Row centered>
-        <Grid.Column width="8">
-          <h2>
-            {' '}
-            {this.state.id !== '' ? 'Update' : 'Add'}
-            {' '}
-            Item
+  render() {
+    return (
+      <Grid>
+        <Loader isLoading={this.props.item.isLoading} />
+        <Grid.Row centered>
+          <Grid.Column width="8">
+            <h2 data-test="page-heading">
+              {this.state.id !== '' ? 'Update' : 'Add'}
+              {' '}
+              Item
             </h2>
-          <Formik
-            enableReinitialize
-            initialValues={this.state.initialValues}
-            validationSchema={this.formValidation()}
-            onSubmit={(values) => {
-              this.formSubmitHandler(values);
-            }}
-          >
-            {this.renderForm}
-          </Formik>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
-  );
-}
+            <Formik
+              enableReinitialize
+              initialValues={this.state.initialValues}
+              validationSchema={this.formValidation()}
+              onSubmit={(values) => {
+                this.formSubmitHandler(values);
+              }}
+            >
+              {this.renderForm}
+            </Formik>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
+  }
 }
 
 function mapStateToProp({ item }) {
@@ -161,6 +157,4 @@ function mapStateToProp({ item }) {
   };
 }
 
-export default connect(mapStateToProp, { getItem, updateItem, addItem })(
-  withRouter(AddItem),
-);
+export default connect(mapStateToProp, { getItem, updateItem, addItem })(UnconnectedAddItem);

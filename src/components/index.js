@@ -30,16 +30,12 @@ export class UnConnectedRouting extends Component {
 
   constructor(props) {
     super(props);
-  }
-
-  /** Check the localstorage have information of logged user */
-  componentDidMount() {
     const loggedUser = reactLocalStorage.get('loggedUser');
     if (loggedUser && this.props.user.isAuthenticated === false) {
       this.props.updateUserStore(JSON.parse(loggedUser));
     }
   }
-
+  
   render() {
     return (
       <Container>

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Grid, Table } from 'semantic-ui-react';
 import moment from 'moment';
@@ -26,7 +25,7 @@ class Dashboard extends Component {
     const { allDayItems } = this.props.item;
     if (allDayItems.length === 0) {
       return (
-        <Table.Row>
+        <Table.Row data-test="no-item-message">
           <Table.Cell colSpan="3">
             <center>No day items are added yet!</center>
           </Table.Cell>
@@ -56,7 +55,7 @@ class Dashboard extends Component {
               {
                 userData.role === "ADMIN" ?
                   (
-                    <div>
+                    <div data-test="total-income" data-test="total-income">
                       <h4>Total Income</h4>
                       <p>
                         Rs.{' '}
@@ -66,7 +65,7 @@ class Dashboard extends Component {
                   )
                   :
                   (
-                    <div>
+                    <div data-test="balance">
                       <h4>Balance</h4>
                       <p>
                         Rs.{' '}

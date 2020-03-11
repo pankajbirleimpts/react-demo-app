@@ -37,11 +37,13 @@ export function MenuLink({ label, to, activeOnlyWhenExact = true }) {
 
 // screen if you're not yet authenticated.
 const AuthRouteFn = ({ component: Component, permission, user, ...rest }) => {
+  console.log("user.isAuthenticated && permission === undefined ", user.isAuthenticated , permission, user.isAuthenticated && permission === undefined);
   return (
     <Route
       {...rest}
       render={({ location, props, history, match }) =>
         (user.isAuthenticated && permission === undefined) ||
+ 
           (user.isAuthenticated &&
             permission !== undefined &&
             permission === user.data.role) ? (
@@ -51,8 +53,8 @@ const AuthRouteFn = ({ component: Component, permission, user, ...rest }) => {
               {toast.warning(langs.messages.PERMISSION_MSG)}
               <Redirect
                 to={{
-                  pathname: '/login',
-                  state: { from: location }
+                  pathname: '/',
+                  state: { from: location },
                 }}
               />
             </React.Fragment>
